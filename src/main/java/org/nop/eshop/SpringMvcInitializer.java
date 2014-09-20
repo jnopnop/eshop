@@ -1,14 +1,13 @@
 package org.nop.eshop;
 
-import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-@Order(1)
-public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+public class SpringMvcInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] { RootConfig.class, SecurityConfig.class };
+        return new Class[] { AppConfig.class };
     }
 
     @Override
