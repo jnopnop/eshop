@@ -1,4 +1,4 @@
-package org.nop.eshop;
+package org.nop.eshop.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
