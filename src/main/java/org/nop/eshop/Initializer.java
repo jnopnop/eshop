@@ -8,7 +8,7 @@ public class Initializer extends AbstractAnnotationConfigDispatcherServletInitia
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] { RootConfig.class /*,SecurityConfig.class*/ };
+        return new Class[] { RootConfig.class, SecurityConfig.class };
     }
 
     @Override

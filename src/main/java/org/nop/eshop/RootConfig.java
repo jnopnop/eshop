@@ -16,7 +16,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan("org.nop.dbp")
+@ComponentScan("org.nop.eshop")
 @PropertySource("classpath:application.properties")
 public class RootConfig {
     private static final String PROPERTY_NAME_DATABASE_DRIVER = "db.driver";
