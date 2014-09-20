@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class HomeController {
 
-	@RequestMapping(value = { "/", "/index", "/logout" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/", "/index" }, method = RequestMethod.GET)
 	public String home(ModelMap model) {
         model.addAttribute("message", "Welcome to eshop!");
         return "index";
@@ -34,6 +34,11 @@ public class HomeController {
     public String adminHome(ModelMap model) {
         model.addAttribute("information", "This page should be visible only to administration!");
         return "admin";
+    }
+
+    @RequestMapping(value = "/403", method = RequestMethod.GET)
+    public String accessDenied(ModelMap model) {
+        return "403";
     }
 
 }
