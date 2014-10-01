@@ -1,4 +1,4 @@
-package org.nop.eshop;
+package org.nop.eshop.configuration;
 
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 
