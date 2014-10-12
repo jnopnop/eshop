@@ -12,11 +12,15 @@ public class Role {
 
     private String role;
 
-    @OneToMany(cascade=CascadeType.ALL)
-    @JoinTable(name="users_roles",
-            joinColumns = {@JoinColumn(name="roles_id", referencedColumnName="id")},
-            inverseJoinColumns = {@JoinColumn(name="users_id", referencedColumnName="id")})
+    @ManyToMany(mappedBy = "roles")
     private Set<User> userRoles;
+
+    public Role() {
+    }
+
+    public Role(String role) {
+        this.role = role;
+    }
 
     public Integer getId() {
         return id;
@@ -42,3 +46,9 @@ public class Role {
         this.userRoles = userRoles;
     }
 }
+
+/*
+@JoinTable(name="users_roles",
+            joinColumns = {@JoinColumn(name="roles_id", referencedColumnName="id")},
+            inverseJoinColumns = {@JoinColumn(name="users_id", referencedColumnName="id")})
+ */

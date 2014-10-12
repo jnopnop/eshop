@@ -1,6 +1,8 @@
 package org.nop.eshop.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="users")
@@ -15,11 +17,24 @@ public class User {
 
     private String fullname;
 
-    @OneToOne(cascade=CascadeType.ALL)
+    private String image;
+
+    @ManyToMany(cascade=CascadeType.ALL)
     @JoinTable(name="users_roles",
         joinColumns = {@JoinColumn(name="users_id", referencedColumnName="id")},
         inverseJoinColumns = {@JoinColumn(name="roles_id", referencedColumnName="id")})
-    private Role role;
+    private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private Set<Comment> comments = new HashSet<>();
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public Integer getId() {
         return id;
@@ -53,11 +68,19 @@ public class User {
         this.fullname = fullname;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
 }
