@@ -9,6 +9,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -25,6 +28,8 @@ import java.util.Properties;
 @EnableWebMvc
 @PropertySource("classpath:application.properties")
 @EnableTransactionManagement
+@EnableAsync
+@EnableScheduling
 public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
 
     private static final String PROPERTY_NAME_DATABASE_DRIVER = "db.driver";
@@ -80,7 +85,6 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
                 Movie.class, Genre.class, Country.class,
                 Comment.class, Career.class, AgeCategory.class);
         sessionBuilder.addPackage("org.nop.eshop.model");
-        //sessionBuilder.addAnnotatedClasses(User.class);
         return sessionBuilder.buildSessionFactory();
     }
 
@@ -98,5 +102,14 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/img/**").addResourceLocations("/WEB-INF/img/");
         registry.addResourceHandler("/js/**").addResourceLocations("/WEB-INF/js/");
         registry.addResourceHandler("/fonts/**").addResourceLocations("/WEB-INF/fonts/");
+    }
+
+    @Bean(name = "taskExecutor")
+    public ThreadPoolTaskExecutor taskExecutor() {
+        ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
+        pool.setCorePoolSize(8);
+        pool.setMaxPoolSize(16);
+        pool.setWaitForTasksToCompleteOnShutdown(true);
+        return pool;
     }
 }

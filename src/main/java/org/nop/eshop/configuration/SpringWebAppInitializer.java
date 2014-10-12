@@ -18,6 +18,7 @@ public class SpringWebAppInitializer implements WebApplicationInitializer {
         appContext.register(ApplicationContextConfig.class);
 
         servletContext.addListener(new ContextLoaderListener(appContext));
+        //TODO: Add sitemesh filter
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet(
                 "SpringDispatcher", new DispatcherServlet(appContext));
