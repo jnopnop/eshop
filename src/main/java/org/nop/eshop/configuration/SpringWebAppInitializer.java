@@ -18,13 +18,13 @@ public class SpringWebAppInitializer implements WebApplicationInitializer {
         appContext.register(ApplicationContextConfig.class);
 
         servletContext.addListener(new ContextLoaderListener(appContext));
+        servletContext.addFilter("sitemesh", new CustomSiteMeshFilter()).addMappingForUrlPatterns(null, false, "/*");
         //TODO: Add sitemesh filter
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet(
                 "SpringDispatcher", new DispatcherServlet(appContext));
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
-
     }
 
 }

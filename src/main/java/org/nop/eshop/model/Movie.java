@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "movies")
-public class Movie {
+public class Movie implements Comparable<Movie> {
 
     @Id
     @GeneratedValue
@@ -147,6 +147,15 @@ public class Movie {
 
     public void setImdbId(String imdbId) {
         this.imdbId = imdbId;
+    }
+
+    @Override
+    public int compareTo(Movie o) {
+        if (this.id == null)
+            return -1;
+        if (o.getId() == null)
+            return 1;
+        return this.id.compareTo(o.getId());
     }
 }
 

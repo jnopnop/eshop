@@ -1,11 +1,15 @@
 package org.nop.eshop.configuration;
 
+
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.SessionFactory;
 import org.nop.eshop.model.*;
 import org.nop.eshop.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
@@ -20,6 +24,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Properties;
 
 @Configuration
@@ -95,6 +100,25 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
         return transactionManager;
     }
 
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(jackson2HttpMessageConverter());
+        super.configureMessageConverters(converters);
+    }
+
+    @Bean
+    public MappingJackson2HttpMessageConverter jackson2HttpMessageConverter() {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setPrefixJson(false);
+        converter.setPrettyPrint(true);
+        return converter;
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper;
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -102,7 +126,10 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/img/**").addResourceLocations("/WEB-INF/img/");
         registry.addResourceHandler("/js/**").addResourceLocations("/WEB-INF/js/");
         registry.addResourceHandler("/fonts/**").addResourceLocations("/WEB-INF/fonts/");
+        registry.addResourceHandler("/decorators/**").addResourceLocations("/WEB-INF/decorators/");
     }
+
+
 
     @Bean(name = "taskExecutor")
     public ThreadPoolTaskExecutor taskExecutor() {
