@@ -1,6 +1,7 @@
 package org.nop.eshop.dao;
 
 
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -27,7 +28,9 @@ public class PersonDAOImpl implements PersonDAO {
 
     @Override
     public Person getById(Long id) {
-        return (Person) getCurrentSession().get(Person.class, id);
+        Person p = (Person) getCurrentSession().get(Person.class, id);
+        Hibernate.initialize(p);
+        return p;
     }
 
     @Override

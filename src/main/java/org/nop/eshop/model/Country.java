@@ -1,6 +1,10 @@
 package org.nop.eshop.model;
 
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.Field;
+
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -11,16 +15,18 @@ public class Country {
     @GeneratedValue
     private Integer id;
 
+    @Field
     private String title;
 
     @ManyToMany(cascade=CascadeType.ALL, mappedBy = "countries", fetch = FetchType.LAZY)
-    private Set<Movie> movies;
-
-    public Country() {
-    }
+    @ContainedIn
+    private Set<Movie> movies = new HashSet<>();
 
     public Country(String title) {
         this.title = title;
+    }
+
+    public Country() {
     }
 
     public Integer getId() {
@@ -37,5 +43,13 @@ public class Country {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Set<Movie> getMovies() {
+        return movies;
+    }
+
+    public void setMovies(Set<Movie> movies) {
+        this.movies = movies;
     }
 }

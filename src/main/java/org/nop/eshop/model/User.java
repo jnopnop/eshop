@@ -25,7 +25,7 @@ public class User {
         inverseJoinColumns = {@JoinColumn(name="roles_id", referencedColumnName="id")})
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Comment> comments = new HashSet<>();
 
     public String getImage() {

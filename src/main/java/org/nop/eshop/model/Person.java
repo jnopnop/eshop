@@ -1,5 +1,8 @@
 package org.nop.eshop.model;
 
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
@@ -8,12 +11,17 @@ import java.util.Set;
 
 @Entity
 @Table(name="persons")
+@Indexed
 public class Person {
 
     @Id
     @GeneratedValue
     private Long id;
+
+    @Field
     private String fullname;
+
+    @Field
     private Date birthdate;
 
     @Column(name="photo_url")

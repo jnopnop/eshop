@@ -1,20 +1,24 @@
 package org.nop.eshop.web.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.logging.Logger;
+import org.nop.eshop.service.ImageService;
 import org.nop.eshop.service.MovieService;
 import org.nop.eshop.web.model.MovieWeb;
 import org.nop.eshop.web.model.PagerResult;
+import org.nop.eshop.web.model.PersonWeb;
+import org.nop.eshop.web.model.SearchMovieForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 @Controller
 public class HomeController {
@@ -24,18 +28,26 @@ public class HomeController {
     @Autowired
     private MovieService movieService;
 
-	@RequestMapping(value = { "/", "/index" }, method = RequestMethod.GET)
-	public String home(@RequestParam(value = "q", required = false) String query, ModelMap model) throws IOException, ParseException {
-        List<MovieWeb> result = movieService.search(1, 20);
-        model.addAttribute("currPage", 1);
-        model.addAttribute("movies", result);
-        LOG.info("###################################We have [" + result.size() + "] movies");
-        return "index";
-    }
+    @Autowired
+    private ImageService imageService;
 
-    @RequestMapping(value = "/test.html", method = RequestMethod.GET)
-    public String scraper() {
-        return "test";
+    @RequestMapping(value = { "/", "/index", "/movies"}, method = RequestMethod.GET)
+    public String getMovies(@RequestParam(value = "p", required = false) Integer page,
+                            @RequestParam(value = "q", required = false) String q,
+                            ModelMap model) {
+        PagerResult<MovieWeb> result;
+        if (StringUtils.isNotEmpty(q)) {
+            result = movieService.search(q, page);
+            model.addAttribute("query", q);
+        } else {
+            result = movieService.getPaginated(page);
+        }
+        if (page != null && page > result.getLastPage()) {
+            result.setCurrPage(result.getLastPage());
+        }
+
+        model.addAttribute("movies", result);
+        return "index";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -55,12 +67,11 @@ public class HomeController {
 
     @RequestMapping(value = "/admin**", method = RequestMethod.GET)
     public String adminHome(ModelMap model) {
-        model.addAttribute("information", "This page should be visible only to administration!");
         return "admin";
     }
 
     @RequestMapping(value = "/403", method = RequestMethod.GET)
-    public String accessDenied(ModelMap model) {
+    public String accessDenied() {
         return "403";
     }
 
@@ -69,19 +80,62 @@ public class HomeController {
         return "search";
     }
 
-//    @RequestMapping(value = "/movies", method = RequestMethod.GET)
-//    public String globalSearch(@RequestParam(value = "q", required = false) String query,
-//                               ModelMap model) {
-//        //List<MovieWeb> searchResults = movieService.fullTextSearch(query);
-//        //model.addAttribute("searchResults", searchResults);
-//        return "search";
-//    }
+    @RequestMapping(value = "/fulltextsearch", method = RequestMethod.GET)
+    public String fullTextSearch(ModelMap model) {
+        Map<String, String> years = new TreeMap<>();
+        years.put("", "select year...");
+        for (int i = 1980; i < 2015; i++) years.put(String.valueOf(i), String.valueOf(i));
+        model.addAttribute("years", years);
 
-    @RequestMapping(value = "/movies", method = RequestMethod.GET)
-    public String getMovies(@RequestParam(value = "p", required = false) Integer p, ModelMap model) {
-        PagerResult<MovieWeb> result = movieService.getPaginated(p);
+        Set<String> countries = new TreeSet<>(movieService.getCountries().values());
+        countries.add("");
+        model.addAttribute("countries", countries);
+        model.addAttribute("ageCategories", movieService.getCategories());
+        model.addAttribute("genres", movieService.getGenres().values());
+
+        model.addAttribute("sm", new SearchMovieForm());
+        return "search";
+    }
+
+    @RequestMapping(value = "/movies/search", method = RequestMethod.GET)
+    public String advancedSearch(
+            @RequestParam(value = "p", required = false) Integer page,
+            @ModelAttribute SearchMovieForm sm, ModelMap model) throws ParseException {
+        PagerResult<MovieWeb> result = movieService.search(sm, page);
+        if (page != null && page > result.getLastPage()) {
+            result.setCurrPage(result.getLastPage());
+        }
+
+        Set<String> years = new TreeSet<>();
+        years.add("");
+        for (int i = 1990; i < 2015; i++) years.add(String.valueOf(i));
+        model.addAttribute("years", years);
+
+        Set<String> countries = new TreeSet<>(movieService.getCountries().values());
+        countries.add("");
+        model.addAttribute("countries", countries);
+        model.addAttribute("ageCategories", movieService.getCategories());
+        model.addAttribute("genres", movieService.getGenres().values());
+        model.addAttribute("advanced", true);
         model.addAttribute("movies", result);
+        model.addAttribute("sm", sm);
         return "index";
+    }
+
+    @RequestMapping(value = "/movie/{id}.json", method = RequestMethod.GET)
+    public @ResponseBody MovieWeb getMovie(@PathVariable("id") long id) {
+        return movieService.getById(id);
+    }
+
+    @RequestMapping(value = "/movie/addmovie", method = RequestMethod.GET)
+    public String addNewMovie() {
+        return "403";
+    }
+
+    @RequestMapping(value = "/pic/{etype}/{name}", method = RequestMethod.GET)
+    @ResponseBody
+    public byte[] getImage(@PathVariable("etype") String etype, @PathVariable("name") String name) throws IOException {
+        return imageService.getImage(etype, name);
     }
 
     @RequestMapping(value = "/movie/{id}", method = RequestMethod.GET)
@@ -93,5 +147,15 @@ public class HomeController {
 
         model.addAttribute("movie", movie);
         return "movie";
+    }
+
+    @RequestMapping(value = "/person/{id}", method = RequestMethod.GET)
+    public String personPage(@PathVariable("id") long id, ModelMap model) {
+        PersonWeb person = movieService.getPerson(id);
+        if (person == null) {
+            return "redirect:/404";
+        }
+        model.addAttribute("person", person);
+        return "person";
     }
 }

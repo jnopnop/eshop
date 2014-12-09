@@ -2,220 +2,291 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page session="true" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>Admin [Movies]</title>
 
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/chosen.min.css" rel="stylesheet">
+    <link href="/css/chosen/chosen.min.css" rel="stylesheet">
+    <link href="/css/jgrowl/jgrowl.min.css" rel="stylesheet">
+    <link href="/css/admin.css" rel="stylesheet">
 
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/chosen.jquery.min.js"></script>
-    <script src="/js/jquery.serializejson.min.js"></script>
+    <script src="/js/chosen/chosen.jquery.min.js"></script>
+    <script src="/js/jgrowl/jgrowl.min.js"></script>
     <script src="/js/admin.js"></script>
-    <style>
-        html {
-            background: url(/img/main-background.jpg) no-repeat center center fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-        }
-
-        body {
-            margin-top: 40px;
-            font-size: 16px;
-            background: transparent;
-        }
-
-        .panel {
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-
-        .well {
-            background: rgba(240, 237, 239, 0.85);
-        }
-    </style>
 </head>
 <body>
-<div class="container">
+    <%@ include file="common/admin_navbar.jsp" %>
+    <div id="page-content-wrapper">
+        <!-- Keep all page content within the page-content inset div! -->
+        <div class="page-content inset">
+            <div class="row">
+                <div class="well">
+                    <div class="row accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#search-form">Search</a>
+                                </h4>
+                            </div>
+                            <div id="search-form" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    <form:form method="get" action="/admin/search/movies" commandName="sm" cssClass="form-horizontal" id="movie-search">
+                                        <fieldset>
 
-    <div class="row">
-        <div class="col-lg-12 col-md-12 panel panel-default">
-            <nav class="navbar navbar-default navbar-fixed-top">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">GroovyMovieAdmin</a>
-                </div>
+                                            <div class="form-group">
+                                                <form:label  cssClass="col-md-4 control-label" path="title">Title</form:label>
+                                                <div class="col-md-4">
+                                                    <form:input path="title" cssClass="form-control input-md"></form:input>
+                                                </div>
+                                            </div>
 
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav pull-right">
-                        <sec:authorize ifAnyGranted="ROLE_USER">
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">${pageContext.request.userPrincipal.name}<b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">Logout</a></li>
-                                </ul>
+                                            <div class="form-group">
+                                                <form:label path="year_start" cssClass="col-md-4 control-label">Begin Year</form:label>
+                                                <div class="col-md-4">
+                                                    <form:select path="year_start" items="${years}" cssClass="form-control chzn"></form:select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <form:label path="year_end" cssClass="col-md-4 control-label">End Year</form:label>
+                                                <div class="col-md-4">
+                                                    <form:select path="year_end" items="${years}" cssClass="form-control chzn"></form:select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <form:label path="country" cssClass="col-md-4 control-label">Country</form:label>
+                                                <div class="col-md-4">
+                                                    <form:select path="country" items="${countries}" cssClass="form-control chzn"></form:select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <form:label class="col-md-4 control-label" path="ageCategory">Age Category</form:label>
+                                                <div class="col-md-4">
+                                                    <form:select path="ageCategory" cssClass="form-control chzn" items="${ageCategories}"></form:select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <form:label class="col-md-4 control-label" path="genres">Genres</form:label>
+                                                <div class="col-md-4">
+                                                    <form:select path="genres" items="${genres}" cssClass="form-control chzn" multiple="multiple"></form:select>
+                                                </div>
+                                            </div>
+
+                                            <input type="submit" name="submit_movie" id="submit_movie" value="Search" class="btn btn-info pull-right">
+                                        </fieldset>
+                                    </form:form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <ul class="pager">
+                            <c:set var="hereClass" value="${movies.currPage <= 1 ? 'disabled':''}"></c:set>
+                            <c:set var="thereClass" value="${movies.currPage >= movies.lastPage ? 'disabled':''}"></c:set>
+                            <li class="previous ${hereClass}">
+                                <a href="/admin/search/movies?<%=request.getQueryString() != null ? request.getQueryString().replaceAll("&p=[\\d]*", "") : ""%>&p=${movies.currPage - 1}">&larr; Here</a>
                             </li>
-                        </sec:authorize>
-                        <li class="active"><a href="#">Movies</a></li>
-                        <li><a href="/padmin">Persons</a></li>
-                    </ul>
-                    <form class="navbar-form">
-                        <input type="search" class="form-control pull-left" name="q" />
-                    </form>
-                </div><!--/.nav-collapse -->
-            </nav>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <form class="form-horizontal well" id="form-add-movie">
-                <fieldset>
-
-                    <!-- Form Name -->
-                    <legend>Form Name</legend>
-
-                    <!-- Text input-->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="title">Title</label>
-                        <div class="col-md-4">
-                            <input id="title" name="title" type="text" placeholder="" class="form-control input-md">
-
-                        </div>
+                            <li class="next ${thereClass}">
+                                <a href="/admin/search/movies?<%=request.getQueryString() != null ? request.getQueryString().replaceAll("&p=[\\d]*", "") : ""%>&p=${movies.currPage + 1}">There &rarr;</a>
+                            </li>
+                        </ul>
                     </div>
-
-                    <!-- Text input-->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="description">Description</label>
-                        <div class="col-md-4">
-                            <input id="description" name="description" type="text" placeholder="" class="form-control input-md">
-
-                        </div>
+                    <div class="list-group">
+                        <c:choose>
+                            <c:when test="${empty movies.results}">
+                                <h2>Nothing was found. You're trying to do something odd, aren't you?!</h2>
+                            </c:when>
+                            <c:otherwise>
+                                <c:forEach items="${movies.results}" var="si">
+                                    <div class="list-group-item row" id="item-movie-${si.id}">
+                                        <div class="media col-md-2">
+                                            <figure class="pull-left">
+                                                <img style="width:150px;" class="img-responsive img-thumbnail" src="/pic/movies/${si.imageURL}">
+                                            </figure>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <h4>ID: ${si.id}</h4>
+                                            <a href="/movie/${si.id}" target="_blank"><h4 class="list-group-item-heading admin-movie-title">${si.title} (<fmt:formatDate value="${si.releaseDate}" type="DATE" pattern="yyyy"></fmt:formatDate>)</h4></a>
+                                            <span class="admin-delete"><a href="#" data-toggle="modal" data-target="#deleteMovieModal" data-movie-id="${si.id}">delete</a></span>
+                                            <span class="admin-edit"><a href="#" data-toggle="modal" data-target="#editMovieModal" data-movie-id="${si.id}">edit</a></span>
+                                        </div> <%-- /admin/delete/movie/${si.id} --%>
+                                        <%--<div class="col-md-1 admin-controls">--%>
+                                            <%--<sec:authorize ifAnyGranted="ROLE_ADMIN">--%>
+                                                <%--<button data-id="${si.id}" type="button" class="edit-item">&hellip;</button>--%>
+                                                <%--<button data-id="${si.id}" type="button" class="delete-item">&times;</button>--%>
+                                            <%--</sec:authorize>--%>
+                                        <%--</div>--%>
+                                    </div>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
-
-                    <!-- Text input-->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="duration">Duration</label>
-                        <div class="col-md-4">
-                            <input id="duration" name="duration" type="text" placeholder="" class="form-control input-md">
-
-                        </div>
-                    </div>
-
-                    <!-- Text input-->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="releaseDate">Release Date</label>
-                        <div class="col-md-4">
-                            <input id="releaseDate" name="releaseDate" type="text" placeholder="" class="form-control input-md">
-
-                        </div>
-                    </div>
-
-                    <!-- Text input-->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="rating">Rating</label>
-                        <div class="col-md-4">
-                            <input id="rating" name="rating" type="text" placeholder="" class="form-control input-md">
-
-                        </div>
-                    </div>
-
-                    <!-- Text input-->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="imageURL">Poster Picture</label>
-                        <div class="col-md-4">
-                            <input id="imageURL" name="imageURL" type="text" placeholder="http://" class="form-control input-md">
-
-                        </div>
-                    </div>
-
-                    <!-- Text input-->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="imdbId">IMDB ID</label>
-                        <div class="col-md-4">
-                            <input id="imdbId" name="imdbId" type="text" placeholder="" class="form-control input-md">
-                            <span class="help-block">optional</span>
-                        </div>
-                    </div>
-
-                    <!-- Select Basic -->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="ageCategory">Age Category</label>
-                        <div class="col-md-4">
-                            <select id="ageCategory" name="ageCategory" class="form-control">
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Select Multiple -->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="genres">Genres</label>
-                        <div class="col-md-4">
-                            <select id="genres" name="genres" class="form-control" multiple="multiple">
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Select Multiple -->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="countries">Countries</label>
-                        <div class="col-md-4">
-                            <select id="countries" name="countries" class="form-control" multiple="multiple">
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Select Multiple -->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="directors">Directors</label>
-                        <div class="col-md-4">
-                            <select id="directors" name="directors" class="form-control" multiple="multiple">
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Select Multiple -->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="writers">Writers</label>
-                        <div class="col-md-4">
-                            <select id="writers" name="writers" class="form-control" multiple="multiple">
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Select Multiple -->
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="actors">Actors</label>
-                        <div class="col-md-4">
-                            <select id="actors" name="actors" class="form-control" multiple="multiple">
-                            </select>
-                        </div>
-                    </div>
-                </fieldset>
-            </form>
-            <!-- Button -->
-            <div class="form-group">
-                <label class="col-md-4 control-label" for="addmovie"></label>
-                <div class="col-md-4">
-                    <button id="addmovie" name="addmovie" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </div>
     </div>
-</div> <!-- /container -->
+
+    <div class="modal fade" id="deleteMovieModal" tabindex="-1" role="dialog" aria-labelledby="deleteMovieModal" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Delete movie?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="delete-movie-btn" type="button" class="btn btn-primary">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editMovieModal" tabindex="-1" role="dialog" aria-labelledby="editMovieModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="editMovieModalLabel">Edit Movie</h4>
+                </div>
+                <div class="modal-body">
+                    <form:form cssClass="form-horizontal" id="form-edit-movie" action="" commandName="m" method="put">
+                        <fieldset>
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="title">Title</form:label>
+                                <div class="col-md-10">
+                                    <form:input id="title" path="title" placeholder="" cssClass="form-control input-md"></form:input>
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="description">Description</form:label>
+                                <div class="col-md-10">
+                                    <form:textarea id="description" path="description" cssClass="form-control input-md"></form:textarea>
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="duration">Duration</form:label>
+                                <div class="col-md-10">
+                                    <form:input id="duration" path="duration" cssClass="form-control input-md"></form:input>
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="releaseDate">Release Date</form:label>
+                                <div class="col-md-10">
+                                    <form:input id="releaseDate" path="releaseDate" cssClass="form-control input-md"></form:input>
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="rating">Rating</form:label>
+                                <div class="col-md-10">
+                                    <form:input id="rating" path="rating" cssClass="form-control input-md"></form:input>
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="imageURL">Poster Picture</form:label>
+                                <div class="col-md-10">
+                                    <form:input id="imageURL" path="imageURL" cssClass="form-control input-md"></form:input>
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="imdbId">IMDB ID</form:label>
+                                <div class="col-md-10">
+                                    <form:input id="imdbId" path="imdbId" cssClass="form-control input-md"></form:input>
+                                    <span class="help-block">optional</span>
+                                </div>
+                            </div>
+
+                            <!-- Select Basic -->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="ageCategory">Age Category</form:label>
+                                <div class="col-md-10">
+                                    <form:select id="ageCategory" path="ageCategory" cssClass="form-control">
+                                    </form:select>
+                                </div>
+                            </div>
+
+                            <!-- Select Multiple -->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="genres">Genres</form:label>
+                                <div class="col-md-10">
+                                    <form:select id="genres" path="genres" cssClass="form-control" multiple="multiple">
+                                    </form:select>
+                                </div>
+                            </div>
+
+                            <!-- Select Multiple -->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="countries">Countries</form:label>
+                                <div class="col-md-10">
+                                    <form:select id="countries" path="countries" cssClass="form-control" multiple="multiple">
+                                    </form:select>
+                                </div>
+                            </div>
+
+                            <!-- Select Multiple -->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="directors">Directors</form:label>
+                                <div class="col-md-10">
+                                    <form:select id="directors" path="directors" cssClass="form-control" multiple="multiple">
+                                    </form:select>
+                                </div>
+                            </div>
+
+                            <!-- Select Multiple -->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="writers">Writers</form:label>
+                                <div class="col-md-10">
+                                    <form:select id="writers" path="writers" cssClass="form-control" multiple="multiple">
+                                    </form:select>
+                                </div>
+                            </div>
+
+                            <!-- Select Multiple -->
+                            <div class="form-group">
+                                <form:label cssClass="col-md-2 control-label" path="actors">Actors</form:label>
+                                <div class="col-md-10">
+                                    <form:select id="actors" path="actors" cssClass="form-control" multiple="multiple">
+                                    </form:select>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form:form>
+                    <%--<form role="form">--%>
+                        <%--<div class="form-group">--%>
+                            <%--<label for="recipient-name" class="control-label">Recipient:</label>--%>
+                            <%--<input type="text" class="form-control" id="recipient-name">--%>
+                        <%--</div>--%>
+                        <%--<div class="form-group">--%>
+                            <%--<label for="message-text" class="control-label">Message:</label>--%>
+                            <%--<textarea class="form-control" id="message-text"></textarea>--%>
+                        <%--</div>--%>
+                    <%--</form>--%>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="edit-movie-btn" type="button" class="btn btn-primary">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%@ include file="templates/admin.jsp" %>
 </body>
 </html>
 

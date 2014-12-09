@@ -71,3 +71,12 @@ div.well {
     background-color: #fff;
     cursor: default;
 }
+
+.admin-controls button {
+    outline: none;
+    cursor: pointer;
+    color: white;
+    border: 2px solid rgba(68, 68, 68, 0.71);
+    border-radius: 8px;
+    background: rgba(140, 140, 140, 0.74);
+}

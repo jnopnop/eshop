@@ -11,14 +11,18 @@
 
     <script src="/js/jquery/jquery.min.js"></script>
     <script src="/js/bootstrap/bootstrap.min.js"></script>
+    <script src="/js/jsrender/jsrender.min.js"></script>
+    <script src="/js/underscore/underscore-min.js"></script>
     <script src="/js/common.js"></script>
 
     <sitemesh:write property='head'/>
 </head>
 <body>
 <div class="container">
-    <sitemesh:write property='body'></sitemesh:write>
-    <!--TODO: Add nice footer -->
+    <div id="wrapper" class="active">
+        <sitemesh:write property='body'></sitemesh:write>
+        <!--TODO: Add nice footer -->
+    </div>
 </div>
 </body>
 </html>

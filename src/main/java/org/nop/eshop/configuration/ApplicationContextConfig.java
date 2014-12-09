@@ -8,6 +8,8 @@ import org.nop.eshop.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -24,13 +26,14 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+@EnableWebMvc
 @Configuration
 @Import({ SecurityConfig.class })
 @ComponentScan(basePackages = "org.nop.eshop")
-@EnableWebMvc
 @PropertySource("classpath:application.properties")
 @EnableTransactionManagement
 @EnableAsync
@@ -76,6 +79,8 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
         properties.put(PROPERTY_NAME_HIBERNATE_DIALECT, env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_DIALECT));
         properties.put(PROPERTY_NAME_HIBERNATE_SHOW_SQL, env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_SHOW_SQL));
         properties.put(PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN, env.getRequiredProperty(PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN));
+        properties.put(PROPERTY_NAME_HIBERNATE_DIR_PROVIDER, env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_DIR_PROVIDER));
+        properties.put(PROPERTY_NAME_HIBERNATE_INDEX_DIR, env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_INDEX_DIR));
         return properties;
     }
 
@@ -88,7 +93,7 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
                 User.class, Role.class, Person.class,
                 MoviePersonId.class, MoviePerson.class,
                 Movie.class, Genre.class, Country.class,
-                Comment.class, Career.class, AgeCategory.class);
+                Comment.class);
         sessionBuilder.addPackage("org.nop.eshop.model");
         return sessionBuilder.buildSessionFactory();
     }
@@ -103,6 +108,7 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(jackson2HttpMessageConverter());
+        converters.add(byteArrayHttpMessageConverter());
         super.configureMessageConverters(converters);
     }
 
@@ -129,7 +135,16 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/decorators/**").addResourceLocations("/WEB-INF/decorators/");
     }
 
-
+    @Bean
+    public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
+        ByteArrayHttpMessageConverter byteArrayHttpMessageConverter = new ByteArrayHttpMessageConverter();
+        List<MediaType> supportedMediaTypes = new ArrayList<>();
+        supportedMediaTypes.add(MediaType.IMAGE_JPEG);
+        supportedMediaTypes.add(MediaType.IMAGE_PNG);
+        supportedMediaTypes.add(MediaType.IMAGE_GIF);
+        byteArrayHttpMessageConverter.setSupportedMediaTypes(supportedMediaTypes);
+        return byteArrayHttpMessageConverter;
+    }
 
     @Bean(name = "taskExecutor")
     public ThreadPoolTaskExecutor taskExecutor() {

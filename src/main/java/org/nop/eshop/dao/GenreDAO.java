@@ -13,4 +13,5 @@ public interface GenreDAO {
     Genre getByIMDBId(Long imdbId);
     Genre getByTitle(String title);
     void save(Genre t);
+    void update(Genre d0);
 }

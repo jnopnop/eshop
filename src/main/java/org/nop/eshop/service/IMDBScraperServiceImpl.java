@@ -1,5 +1,6 @@
 package org.nop.eshop.service;
 
+import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,31 +12,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class IMDBScraperServiceImpl implements IMDBScraperService {
-
     private static Logger LOG = Logger.getLogger(IMDBScraperServiceImpl.class);
 
-    private static volatile int i = 0;
 
     private static final String IMDB_SEARCH = "http://www.imdb.com/search/title?year=2013,2013&start=%START%&title_type=feature&sort=moviemeter,asc";
     private static final String START_ITEM = "%START%";
     private static final String IMDB_HOME = "http://www.imdb.com";
     private static final SimpleDateFormat IMDB_SDF = new SimpleDateFormat("yyyy-MM-dd");
 
+    public static final String MOVIE_IMG_HOME = "/var/www/eshop/img/movies/";
+    public static final String PERSON_IMG_HOME = "/var/www/eshop/img/persons/";
+    public static final String USER_IMG_HOME = "/var/www/eshop/img/users/";
+
     @Autowired
     private MovieDAO movieDAO;
-
-    @Autowired
-    private AgeCategoryDAO ageCategoryDAO;
-
-    @Autowired
-    private CareerDAO careedDAO;
 
     @Autowired
     private CommentDAO commentDAO;
@@ -55,6 +59,41 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
     @Autowired
     private RoleDAO roleDAO;
 
+    public String saveImage(String imgUrl, String path, String filename) throws MalformedURLException, InterruptedException {
+        String extension = imgUrl.substring(imgUrl.lastIndexOf('.'));
+        URL url = new URL(imgUrl);
+        InputStream is = null;
+        int delay = 1;
+        while (true) {
+            try {
+                Thread.sleep(100 * delay);
+                delay += 50;
+                is = url.openStream();
+                break;
+            } catch (IOException e) {
+                if (delay > 500) {
+                    LOG.error("Too much time waiting for response for image. Shutting down...");
+                    if (is != null) {
+                        IOUtils.closeQuietly(is);
+                    }
+                    return null;
+                }
+            }
+        }
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(path + filename + extension);
+            IOUtils.copy(is, os);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null)
+                IOUtils.closeQuietly(is);
+            if (os != null)
+                IOUtils.closeQuietly(os);
+        }
+        return extension;
+    }
 
     private Movie scrapBasicMovieInfo(Element e) {
         Movie movie = new Movie();
@@ -65,10 +104,6 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
 
         //IMDB Id
         movie.setImdbId(title.attr("href").replaceAll("\\D", ""));
-
-        //Year
-        //String year = e.select("span.year_type").text().replaceAll("\\D", "");
-        //movie.setYear(Integer.valueOf(year));
 
         //Rating
         Float rating = Float.valueOf(e.select("span.rating-rating>span.value").text());
@@ -84,7 +119,6 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
                 g = new Genre(genreName);
                 genreDAO.save(g);
             }
-
             genres.add(g);
         }
         movie.setGenres(genres);
@@ -92,12 +126,7 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
         //Age Category
         String age = e.select("span.certificate>span").attr("title");
         if (age == null) age = "NONE";
-        AgeCategory ageCategory = ageCategoryDAO.getByTitle(age);
-        if (ageCategory == null) {
-            ageCategory = new AgeCategory(age);
-            ageCategoryDAO.save(ageCategory);
-        }
-        movie.setAgeCategory(ageCategory);
+        movie.setAgeCategory(age);
 
         //Duration
         Integer runtime = Integer.valueOf(e.select("span.runtime").text().replaceAll("\\D", ""));
@@ -117,7 +146,8 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
     //@Scheduled(fixedDelay = 3600000L)
     @Transactional
     public synchronized void execute () throws IOException, ParseException {
-        for (int i = 1; i < 21; i++) {
+        for (int i = 0; i < 2; i++) {
+            //int i = 0;
             Document pageI = getIMDBDocument(IMDB_SEARCH.replace(START_ITEM, String.valueOf(50 * i + 1)));
             Elements searchResults = pageI.select("tr.detailed>td.title");
             for (Element e: searchResults) {
@@ -149,7 +179,6 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
         if (eComments.isEmpty())
             return movie;
 
-        Set<Comment> comments = new HashSet<>();
         Role role_user = roleDAO.getRole(2);
         int size = eComments.size();
         if (size > 3)
@@ -170,8 +199,18 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
                 u.setFullname(username);
 
                 String userPic = userLinks.select("img").attr("src");
-                u.setImage(userPic);
+                String ext = null;
+                String filename = username.replaceAll("\\s","");
+                try {
+                    ext = saveImage(userPic, USER_IMG_HOME, filename);
+                } catch (Exception e) {
+                    continue;
+                }
+                if (ext != null) {
+                    u.setImage(filename + ext);
+                }
                 userDAO.createUser(u);
+
             }
 
             //Comment
@@ -190,6 +229,7 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
             c.setMovie(movie);
 
             movie.getComments().add(c);
+            commentDAO.save(c);
         }
 
         return movie;
@@ -203,7 +243,15 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
         Date releaseDate = IMDB_SDF.parse(moviePage.select("meta[itemprop=datePublished]").attr("content"));
         basicMovie.setReleaseDate(releaseDate);
 
-        basicMovie.setImageURL(moviePage.select("#img_primary img").attr("src"));
+        String imgURL = moviePage.select("#img_primary img").attr("src");
+        String ext = null;
+        String filename = basicMovie.getImdbId().replaceAll("\\s","");
+        try {
+            ext = saveImage(imgURL, MOVIE_IMG_HOME, filename);
+            if (ext != null)
+                basicMovie.setImageURL(filename + ext);
+        } catch (Exception e) {
+        }
 
         Elements countries = moviePage.select("a[itemprop=url][href^=/country/]");
         if (!countries.isEmpty()) {
@@ -224,10 +272,6 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
         basicMovie.setDescription(description);
 
         Set<MoviePerson> mpc = new HashSet<>();
-        Map<String, Career> careers = new HashMap<>();
-        for (Career c : careedDAO.getAll()) {
-            careers.put(c.getTitle(), c);
-        }
 
         Elements directors = moviePage.select("div.txt-block[itemprop=director]>a");
         for (Element dir: directors) {
@@ -242,7 +286,7 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
             }
             MoviePerson mp = new MoviePerson();
             mp.setPerson(p);
-            mp.setCareer(careers.get("DIRECTOR"));
+            mp.setCareer("DIRECTOR");
             mp.setMovie(basicMovie);
             mpc.add(mp);
         }
@@ -260,7 +304,7 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
             }
             MoviePerson mp = new MoviePerson();
             mp.setPerson(p);
-            mp.setCareer(careers.get("WRITER"));
+            mp.setCareer("WRITER");
             mp.setMovie(basicMovie);
             mpc.add(mp);
         }
@@ -278,24 +322,14 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
             }
             MoviePerson mp = new MoviePerson();
             mp.setPerson(p);
-            mp.setCareer(careers.get("ACTOR"));
+            mp.setCareer("ACTOR");
             mp.setMovie(basicMovie);
             mpc.add(mp);
         }
 
-        //TODO: countries
-
 
         basicMovie.setPersons(mpc);
         return basicMovie;
-    }
-
-    public void rrr() {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private Document getIMDBDocument(String URL) {
@@ -340,7 +374,12 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
         bi = person.select("td#img_primary img");
         if ( bi != null && bi.size() > 0) {
             String imgURL = bi.get(0).attr("src");
-            p.setPhotoURL(imgURL);
+            try {
+                String filename = p.getImdbId().replaceAll("\\s","");
+                String ext = saveImage(imgURL, PERSON_IMG_HOME, filename);
+                if (ext != null)
+                    p.setPhotoURL(filename + ext);
+            } catch (Exception e) {}
         }
 
         return p;

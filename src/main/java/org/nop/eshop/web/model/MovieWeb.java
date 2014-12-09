@@ -13,12 +13,13 @@ public class MovieWeb {
     private Float rating;
     private String imageURL;
     private String imdbId;
-    private AgeCategoryWeb ageCategory;
+    private String ageCategory;
     private Map<Long, String> genres;
     private Map<Long, String> countries;
     private Map<Long, String> directors;
     private Map<Long, String> writers;
     private Map<Long, String> actors;
+    private Map<Long, CommentWeb> comments;
 
     public Map<Long, String> getWriters() {
         return writers;
@@ -92,11 +93,11 @@ public class MovieWeb {
         this.imdbId = imdbId;
     }
 
-    public AgeCategoryWeb getAgeCategory() {
+    public String getAgeCategory() {
         return ageCategory;
     }
 
-    public void setAgeCategory(AgeCategoryWeb ageCategory) {
+    public void setAgeCategory(String ageCategory) {
         this.ageCategory = ageCategory;
     }
 
@@ -130,5 +131,13 @@ public class MovieWeb {
 
     public void setActors(Map<Long, String> actors) {
         this.actors = actors;
+    }
+
+    public Map<Long, CommentWeb> getComments() {
+        return comments;
+    }
+
+    public void setComments(Map<Long, CommentWeb> comments) {
+        this.comments = comments;
     }
 }

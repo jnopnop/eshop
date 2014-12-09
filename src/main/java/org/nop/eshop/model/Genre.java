@@ -1,6 +1,10 @@
 package org.nop.eshop.model;
 
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.Field;
+
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -11,10 +15,12 @@ public class Genre {
     @GeneratedValue
     private Integer id;
 
+    @Field
     private String title;
 
-    @ManyToMany(cascade=CascadeType.ALL, mappedBy = "genres", fetch = FetchType.LAZY)
-    private Set<Movie> movies;
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
+    @ContainedIn
+    private Set<Movie> movies = new HashSet<>();
 
     public Genre() {
     }

@@ -1,6 +1,7 @@
 package org.nop.eshop.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,7 +14,7 @@ public class Role {
     private String role;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> userRoles;
+    private Set<User> userRoles = new HashSet<>();
 
     public Role() {
     }

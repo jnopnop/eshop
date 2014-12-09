@@ -9,4 +9,6 @@ jQuery(function ($) {
             enabled: false
         });
     });
+
+    $('.chzn').chosen({allow_single_deselect: true});
 });

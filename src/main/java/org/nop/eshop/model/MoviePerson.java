@@ -7,8 +7,7 @@ import java.io.Serializable;
 @Table(name = "movies_persons")
 @AssociationOverrides({
         @AssociationOverride(name = "pk.person", joinColumns = @JoinColumn(name = "persons_id")),
-        @AssociationOverride(name = "pk.movie", joinColumns = @JoinColumn(name = "movies_id")),
-        @AssociationOverride(name = "pk.career", joinColumns = @JoinColumn(name = "careers_id"))
+        @AssociationOverride(name = "pk.movie", joinColumns = @JoinColumn(name = "movies_id"))
 })
 public class MoviePerson implements Serializable {
     private static final long serialVersionUID = -3342324212394888441L;
@@ -34,11 +33,11 @@ public class MoviePerson implements Serializable {
     }
 
     @Transient
-    public Career getCareer() {
+    public String getCareer() {
         return getPk().getCareer();
     }
 
-    public void setCareer(Career career) {
+    public void setCareer(String career) {
         getPk().setCareer(career);
     }
 
@@ -54,13 +53,12 @@ public class MoviePerson implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MoviePerson)) return false;
+        if (o == null || !(o instanceof MoviePerson)) return false;
 
         MoviePerson that = (MoviePerson) o;
 
-        if (!getPk().equals(that.getPk())) return false;
+        return getPk().equals(that.getPk());
 
-        return true;
     }
 
     @Override

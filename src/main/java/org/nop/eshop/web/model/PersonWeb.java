@@ -2,6 +2,7 @@ package org.nop.eshop.web.model;
 
 
 import java.util.Date;
+import java.util.Set;
 
 public class PersonWeb {
     private Long id;
@@ -9,6 +10,9 @@ public class PersonWeb {
     private Date birthdate;
     private String photoURL;
     private String imdbId;
+    private Set<MovieWeb> directorAt;
+    private Set<MovieWeb> writerAt;
+    private Set<MovieWeb> actorAt;
 
     public Long getId() {
         return id;
@@ -48,5 +52,29 @@ public class PersonWeb {
 
     public void setImdbId(String imdbId) {
         this.imdbId = imdbId;
+    }
+
+    public Set<MovieWeb> getDirectorAt() {
+        return directorAt;
+    }
+
+    public void setDirectorAt(Set<MovieWeb> directorAt) {
+        this.directorAt = directorAt;
+    }
+
+    public Set<MovieWeb> getWriterAt() {
+        return writerAt;
+    }
+
+    public void setWriterAt(Set<MovieWeb> writerAt) {
+        this.writerAt = writerAt;
+    }
+
+    public Set<MovieWeb> getActorAt() {
+        return actorAt;
+    }
+
+    public void setActorAt(Set<MovieWeb> actorAt) {
+        this.actorAt = actorAt;
     }
 }

@@ -14,8 +14,7 @@ public class MoviePersonId implements Serializable {
     @ManyToOne
     private Person person;
 
-    @ManyToOne
-    private Career career;
+    private String career;
 
     public Movie getMovie() {
         return movie;
@@ -33,11 +32,11 @@ public class MoviePersonId implements Serializable {
         this.person = person;
     }
 
-    public Career getCareer() {
+    public String getCareer() {
         return career;
     }
 
-    public void setCareer(Career career) {
+    public void setCareer(String career) {
         this.career = career;
     }
 
@@ -52,11 +51,7 @@ public class MoviePersonId implements Serializable {
 
         MoviePersonId that = (MoviePersonId) o;
 
-        if (!career.equals(that.career)) return false;
-        if (!movie.equals(that.movie)) return false;
-        if (!person.equals(that.person)) return false;
-
-        return true;
+        return movie.equals(that.movie) && person.equals(that.person) && career.equalsIgnoreCase(that.career);
     }
 
     @Override

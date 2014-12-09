@@ -1,5 +1,8 @@
 package org.nop.eshop.model;
 
+import org.hibernate.search.annotations.*;
+import org.nop.eshop.search.TopRatingBoostStrategy;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
@@ -7,43 +10,59 @@ import java.util.Set;
 
 @Entity
 @Table(name = "movies")
+@Indexed
+@DynamicBoost(impl = TopRatingBoostStrategy.class)
 public class Movie implements Comparable<Movie> {
 
     @Id
     @GeneratedValue
     private Long id;
+
+    @Field(store = Store.COMPRESS)
     private String title;
+
+    @Field(store = Store.COMPRESS)
     private String description;
-    private Integer duration;
-    @Column(name = "release_date")
+
+    @Field
+    @DateBridge(resolution = Resolution.YEAR)
     private Date releaseDate;
+
+    @Field(store = Store.COMPRESS, index = Index.NO)
+    private Integer duration;
+
+    @Field(store = Store.COMPRESS, index = Index.NO)
     private Float rating;
-    @Column(name = "img_url")
+
+    @Field(store = Store.COMPRESS, index = Index.NO)
     private String imageURL;
-    @Column(name="imdb_id")
+
     private String imdbId;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "age_categories_id")
-    private AgeCategory ageCategory;
+    @Field(store = Store.COMPRESS)
+    private String ageCategory;
 
-    @ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="movies_genres",
             joinColumns = {@JoinColumn(name="movies_id", referencedColumnName="id")},
             inverseJoinColumns = {@JoinColumn(name="genres_id", referencedColumnName="id")})
-    private Set<Genre> genres;
+    @IndexedEmbedded(depth = 1)
+    private Set<Genre> genres = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "movie")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "movie")
     private Set<Comment> comments = new HashSet<>();
 
-    @ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
+    //TODO: Set proper cascade type
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="movies_countries",
             joinColumns = {@JoinColumn(name="movies_id", referencedColumnName="id")},
             inverseJoinColumns = {@JoinColumn(name="countries_id", referencedColumnName="id")})
-    private Set<Country> countries;
+    @IndexedEmbedded(depth = 1)
+    private Set<Country> countries = new HashSet<>();
 
+    //TODO: Set proper cascade type
     @OneToMany(mappedBy = "pk.movie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<MoviePerson> persons = new HashSet<>(0);
+    private Set<MoviePerson> persons = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -109,11 +128,11 @@ public class Movie implements Comparable<Movie> {
         this.imageURL = imageURL;
     }
 
-    public AgeCategory getAgeCategory() {
+    public String getAgeCategory() {
         return ageCategory;
     }
 
-    public void setAgeCategory(AgeCategory ageCategory) {
+    public void setAgeCategory(String ageCategory) {
         this.ageCategory = ageCategory;
     }
 

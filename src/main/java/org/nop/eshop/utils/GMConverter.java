@@ -11,6 +11,21 @@ import java.util.*;
 public class GMConverter {
     Logger log = Logger.getLogger(GMConverter.class);
 
+    public static MovieWeb toSimpleMovie(Movie movie) {
+        MovieWeb result = new MovieWeb();
+        result.setId(movie.getId());
+        result.setRating(movie.getRating());
+        result.setReleaseDate(movie.getReleaseDate());
+        result.setTitle(movie.getTitle());
+        result.setImageURL(movie.getImageURL());
+        result.setDescription(movie.getDescription());
+        result.setDuration(movie.getDuration());
+        result.setImdbId(movie.getImdbId());
+        result.setAgeCategory(movie.getAgeCategory());
+
+        return result;
+    }
+
     public static MovieWeb toWebModel(Movie movie) {
         if (movie == null)
             return null;
@@ -24,21 +39,49 @@ public class GMConverter {
         result.setDescription(movie.getDescription());
         result.setDuration(movie.getDuration());
         result.setImdbId(movie.getImdbId());
+        result.setAgeCategory(movie.getAgeCategory());
 
-        result.setAgeCategory(toWebAgeCategory(movie.getAgeCategory()));
+        //complex fields
         result.setGenres(toWebGenres(movie.getGenres()));
-        result.setCountries(toWebCountries(movie.getCountries()));
+        result.setCountries(toSimpleWebCountries(movie.getCountries()));
         result.setDirectors(toWebDirectors(movie.getPersons()));
         result.setActors(toWebActors(movie.getPersons()));
         result.setWriters(toWebWriters(movie.getPersons()));
-
+        result.setComments(toWebComments(movie.getComments()));
         return result;
+    }
+
+    private static Map<Long, CommentWeb> toWebComments(Set<Comment> comments) {
+        Map<Long, CommentWeb> result = new HashMap<>();
+        for (Comment c: comments) {
+            result.put(c.getId(), toWebComment(c));
+        }
+        return result;
+    }
+
+    private static CommentWeb toWebComment(Comment c) {
+        CommentWeb cw = new CommentWeb();
+        cw.setText(c.getText());
+        cw.setTitle(c.getTitle());
+        cw.setId(c.getId());
+        cw.setUser(toUserWeb(c.getUser()));
+        return cw;
+    }
+
+    private static UserWeb toUserWeb(User user) {
+        UserWeb uw = new UserWeb();
+        uw.setId(user.getId());
+        uw.setEmail(user.getEmail());
+        uw.setFullname(user.getFullname());
+        uw.setPassword(user.getPassword());
+        uw.setImage(user.getImage());
+        return uw;
     }
 
     private static Map<Long, String> toWebWriters(Collection<MoviePerson> persons) {
         Map<Long, String> result = new HashMap<>();
         for (MoviePerson mp: persons) {
-            if (mp.getCareer().getTitle().equals(MovieService.PERSON_WRITER)) {
+            if (mp.getCareer().equals(MovieService.PERSON_WRITER)) {
                 result.put(mp.getPerson().getId(), mp.getPerson().getFullname());
             }
         }
@@ -48,7 +91,7 @@ public class GMConverter {
     public static Map<Long, String> toWebDirectors(Collection<MoviePerson> persons) {
         Map<Long, String> result = new HashMap<>();
         for (MoviePerson mp: persons) {
-            if (mp.getCareer().getTitle().equals(MovieService.PERSON_DIRECTOR)) {
+            if (mp.getCareer().equals(MovieService.PERSON_DIRECTOR)) {
                 result.put(mp.getPerson().getId(), mp.getPerson().getFullname());
             }
         }
@@ -58,7 +101,7 @@ public class GMConverter {
     public static Map<Long, String> toWebActors(Collection<MoviePerson> persons) {
         Map<Long, String> result = new HashMap<>();
         for (MoviePerson mp: persons) {
-            if (mp.getCareer().getTitle().equals(MovieService.PERSON_ACTOR)) {
+            if (mp.getCareer().equals(MovieService.PERSON_ACTOR)) {
                 result.put(mp.getPerson().getId(), mp.getPerson().getFullname());
             }
         }
@@ -80,13 +123,54 @@ public class GMConverter {
         result.setFullname(person.getFullname());
         result.setImdbId(person.getImdbId());
         result.setPhotoURL(person.getPhotoURL());
+        result.setDirectorAt(getDirectedMovies(person.getMoviePersons()));
+        result.setWriterAt(getWroteMovies(person.getMoviePersons()));
+        result.setActorAt(getActedMovies(person.getMoviePersons()));
         return result;
     }
 
-    public static Map<Long, String> toWebCountries(Collection<Country> countries) {
+    private static Set<MovieWeb> getActedMovies(Set<MoviePerson> moviePersons) {
+        Set<MovieWeb> result = new HashSet<>();
+        for (MoviePerson mp: moviePersons) {
+            if (mp.getCareer().equals(MovieService.PERSON_ACTOR)) {
+                result.add(toSimpleMovie(mp.getMovie()));
+            }
+        }
+        return result;
+    }
+
+    private static Set<MovieWeb> getWroteMovies(Set<MoviePerson> moviePersons) {
+        Set<MovieWeb> result = new HashSet<>();
+        for (MoviePerson mp: moviePersons) {
+            if (mp.getCareer().equals(MovieService.PERSON_WRITER)) {
+                result.add(toSimpleMovie(mp.getMovie()));
+            }
+        }
+        return result;
+    }
+
+    private static Set<MovieWeb> getDirectedMovies(Set<MoviePerson> moviePersons) {
+        Set<MovieWeb> result = new HashSet<>();
+        for (MoviePerson mp: moviePersons) {
+            if (mp.getCareer().equals(MovieService.PERSON_DIRECTOR)) {
+                result.add(toSimpleMovie(mp.getMovie()));
+            }
+        }
+        return result;
+    }
+
+    public static Map<Long, String> toSimpleWebCountries(Collection<Country> countries) {
         Map<Long, String> result = new HashMap<>();
         for (Country c: countries) {
             result.put(Long.valueOf(c.getId()), c.getTitle());
+        }
+        return result;
+    }
+
+    public static Map<Long, CountryWeb> toWebCountries(Collection<Country> countries) {
+        Map<Long, CountryWeb> result = new HashMap<>();
+        for (Country c: countries) {
+            result.put(Long.valueOf(c.getId()), toWebCountry(c));
         }
         return result;
     }
@@ -123,20 +207,5 @@ public class GMConverter {
         }
 
         return webMovies;
-    }
-
-    public static AgeCategoryWeb toWebAgeCategory(AgeCategory ageCategory) {
-        AgeCategoryWeb ageCategoryWeb = new AgeCategoryWeb();
-        ageCategoryWeb.setId(ageCategory.getId());
-        ageCategoryWeb.setCategory(ageCategory.getCategory());
-        return ageCategoryWeb;
-    }
-
-    public static Map<Long, String> toWebAgeCategories(List<AgeCategory> categories) {
-        Map<Long, String> result = new HashMap<>();
-        for (AgeCategory a: categories) {
-            result.put(Long.valueOf(a.getId()), a.getCategory());
-        }
-        return result;
     }
 }

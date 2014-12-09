@@ -93,7 +93,7 @@ CREATE INDEX fk_comments_users1 ON comments (user_id);
 CREATE UNIQUE INDEX title ON countries (title);
 CREATE UNIQUE INDEX title ON genres (title);
 ALTER TABLE movies ADD FOREIGN KEY (age_categories_id) REFERENCES age_categories (id) ON DELETE CASCADE ON UPDATE CASCADE;
-CREATE UNIQUE INDEX imdb_id ON movies (imdb_id);
+CREATE UNIQUE INDEX imdb_id ON movies (imdbId);
 CREATE INDEX fk_movies_age_categories1 ON movies (age_categories_id);
 ALTER TABLE movies_countries ADD FOREIGN KEY (countries_id) REFERENCES countries (id) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE movies_countries ADD FOREIGN KEY (movies_id) REFERENCES movies (id) ON DELETE CASCADE ON UPDATE CASCADE;

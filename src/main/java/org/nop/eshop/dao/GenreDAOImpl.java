@@ -48,4 +48,9 @@ public class GenreDAOImpl implements GenreDAO {
     public void save(Genre genre) {
         getCurrentSession().save(genre);
     }
+
+    @Override
+    public void update(Genre d0) {
+        getCurrentSession().update(d0);
+    }
 }
