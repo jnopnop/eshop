@@ -1,5 +1,8 @@
 package org.nop.eshop.model;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
@@ -12,6 +15,7 @@ public class MoviePersonId implements Serializable {
     private Movie movie;
 
     @ManyToOne
+    @Cascade(CascadeType.SAVE_UPDATE)
     private Person person;
 
     private String career;

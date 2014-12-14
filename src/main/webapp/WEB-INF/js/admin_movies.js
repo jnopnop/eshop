@@ -5,30 +5,30 @@ var allData = {fresh: false};
 
 var fillMovieData = function (id) {
     $.get('/admin/movie/'+id, function (data) {
-        $('#form-edit-movie #title').val(data.title);
-        $('#description').val(data.description);
-        $('#rating').val(data.rating);
-        $('#duration').val(data.duration);
-        $('#releaseDate').val(data.releaseDate);
-        $('#imageURL').val(data.imageURL);
-        $('#imdbId').val(data.imdbId);
-        $('select#ageCategory').val(data.ageCategory);
-        $('select#ageCategory').trigger("chosen:updated");
+        $('#mtitle').val(data.title);
+        $('#mdescription').val(data.description);
+        $('#mrating').val(data.rating);
+        $('#mduration').val(data.duration);
+        $('#mreleaseDate').val(data.releaseDate);
+        $('#mimageURL').val(data.imageURL);
+        $('#mimdbId').val(data.imdbId);
+        $('select#mageCategory').val(data.ageCategory);
+        $('select#mageCategory').trigger("chosen:updated");
 
-        $('select#genres').val(_.keys(data.genres));
-        $('select#genres').trigger("chosen:updated");
+        $('select#mgenres').val(_.keys(data.genres));
+        $('select#mgenres').trigger("chosen:updated");
 
-        $('select#countries').val(_.keys(data.countries));
-        $('select#countries').trigger("chosen:updated");
+        $('select#mcountries').val(_.keys(data.countries));
+        $('select#mcountries').trigger("chosen:updated");
 
-        $('select#directors').val(_.keys(data.directors));
-        $('select#directors').trigger("chosen:updated");
+        $('select#mdirectors').val(_.keys(data.directors));
+        $('select#mdirectors').trigger("chosen:updated");
 
-        $('select#writers').val(_.keys(data.writers));
-        $('select#writers').trigger("chosen:updated");
+        $('select#mwriters').val(_.keys(data.writers));
+        $('select#mwriters').trigger("chosen:updated");
 
-        $('select#actors').val(_.keys(data.actors));
-        $('select#actors').trigger("chosen:updated");
+        $('select#mactors').val(_.keys(data.actors));
+        $('select#mactors').trigger("chosen:updated");
     });
 };
 
@@ -37,48 +37,48 @@ var populateEditForm = function(data, handler, arg0) {
 
     //Genres
     var currItem = data['genres'];
-    $('select#genres').html('');
+    $('select#mgenres').html('');
     for (var key in currItem) {
-        $('select#genres')
+        $('select#mgenres')
             .append('<option value="' + key + '">' + currItem[key] + '</option>');
     }
-    $('select#genres').chosen();
+    $('select#mgenres').chosen();
     //$('select#genres').trigger("liszt:updated");
 
     //Age categories
     currItem = data['categories'];
-    $('select#ageCategory').html('');
+    $('select#mageCategory').html('');
     for (var key in currItem) {
-        $('select#ageCategory')
+        $('select#mageCategory')
             .append('<option value="' + currItem[key] + '">' + currItem[key] + '</option>');
     }
-    $('select#ageCategory').chosen();
+    $('select#mageCategory').chosen();
     //$('select#ageCategory').trigger("liszt:updated");
 
     //Countries
     currItem = data['countries'];
-    $('select#countries').html('');
+    $('select#mcountries').html('');
     for (var key in data['countries']) {
-        $('select#countries')
+        $('select#mcountries')
             .append('<option value="' + key + '">' + currItem[key] + '</option>');
     }
-    $('select#countries').chosen();
-    $('select#countries').trigger("liszt:updated");
+    $('select#mcountries').chosen();
+    $('select#mcountries').trigger("liszt:updated");
 
     //Persons
     currItem = data['persons'];
-    $('select#directors').html('');
-    $('select#writers').html('');
-    $('select#actors').html('');
+    $('select#mdirectors').html('');
+    $('select#mwriters').html('');
+    $('select#mactors').html('');
     for (var key in currItem) {
         var option = '<option value="' + key + '">' + currItem[key] + '</option>';
-        $('select#directors').append(option);
-        $('select#writers').append(option);
-        $('select#actors').append(option);
+        $('select#mdirectors').append(option);
+        $('select#mwriters').append(option);
+        $('select#mactors').append(option);
     };
-    $('select#directors').chosen();
-    $('select#writers').chosen();
-    $('select#actors').chosen();
+    $('select#mdirectors').chosen();
+    $('select#mwriters').chosen();
+    $('select#mactors').chosen();
 
     handler(arg0);
 };
@@ -122,43 +122,42 @@ jQuery(function ($) {
     });
 
     $('#edit-movie-btn').click(function() {
-        var movieID = $(this).data('movie-id');
+        var movieID = '';//$(this).data('movie-id');
         var genres = {};
-        debugger;
-        $.each($('select#genres').chosen().val(), function() {
+        $.each($('select#mgenres').chosen().val(), function() {
             genres[''+this] = '' + this;
         });
 
         var countries = {};
-        $.each($('select#countries').val(), function() {
+        $.each($('select#mcountries').val(), function() {
             countries[''+this] = '' + this;
         });
 
         var directors = {};
-        $.each($('select#directors').val(), function() {
+        $.each($('select#mdirectors').val(), function() {
             directors[''+this] = '' + this;
         });
 
         var writers = {};
-        $.each($('select#writers').val(), function() {
+        $.each($('select#mwriters').val(), function() {
             writers[''+this] = '' + this;
         });
 
         var actors = {};
-        $.each($('select#actors').val(), function() {
+        $.each($('select#mactors').val(), function() {
             actors[''+this] = '' + this;
         });
 
         var newMovie = {
             "id": movieID,
-            "title": $('#form-edit-movie #title').val(),
-            "description": $('#description').val(),
-            "duration": $('#duration').val(),
-            "releaseDate": $('#releaseDate').val(),
-            "rating": $('#rating').val(),
-            "imageURL": $('#imageURL').val(),
-            "imdbId": $('#imdbId').val(),
-            "ageCategory": $('select#ageCategory').val(),
+            "title": $('#mtitle').val(),
+            "description": $('#mdescription').val(),
+            "duration": $('#mduration').val(),
+            "releaseDate": $('#mreleaseDate').val(),
+            "rating": $('#mrating').val(),
+            "imageURL": $('#mimageURL').val(),
+            "imdbId": $('#mimdbId').val(),
+            "ageCategory": $('select#mageCategory').val(),
             "genres": genres,
             "countries": countries,
             "directors": directors,
@@ -172,48 +171,24 @@ jQuery(function ($) {
             dataType: "json",
             data: JSON.stringify(newMovie),
             success: function(result) {
+                debugger;
                 if (result.success) {
-                    $.jGrowl('Movie has been successfully edited', {theme: 'smoke'});
                     location.reload();
                 } else {
                     $.jGrowl('An error occurred while editing movie...');
                 }
-
                 $('#editMovieModal').modal('hide');
             },
-            error: function() {
-                $.jGrowl('An error occurred while editing movie...');
-                $('#editMovieModal').modal('hide');
+            complete: function() {
+             //
             }
         });
-        //debugger;
-        //$.ajax({
-        //    url: '/admin/edit/movie/',
-        //    dataType: 'json',
-        //    data: $('form#form-edit-movie').serialize(),
-        //    type: 'PUT',
-        //    success: function(result) {
-        //        if (result.success) {
-        //            $.jGrowl('Movie has been successfully edited', {
-        //                theme: 'smoke'
-        //            });
-        //        } else {
-        //            $.jGrowl('An error occurred while editing movie...');
-        //        }
-        //
-        //        $('#editMovieModal').modal('hide');
-        //    },
-        //    error: function() {
-        //        $.jGrowl('An error occurred while editing movie...');
-        //        $('#editMovieModal').modal('hide');
-        //    }
-        //});
     });
 
     $('#delete-movie-btn').click(function() {
         var delID = $(this).data('movie-id');
         $.ajax({
-            url: '/admin/delete/movie/'+delID+'.json',
+            url: '/admin/deleteById/movie/'+delID+'.json',
             type: 'DELETE',
             success: function(result) {
                 //debugger;
@@ -238,25 +213,6 @@ jQuery(function ($) {
             }
         });
     });
-
-    var myTemplate = $.templates("#personTmpl");
-    var people = [
-        {
-            name: "Adriana"
-        },
-        {
-            name: "Robert"
-        }
-    ];
-
-    var html = myTemplate.render(people);
-    $("#res").html(html);
-
-    //$('#admin-movies').click(function(){
-    //    $.get('/admin/movies.json', function(data) {
-    //
-    //    });
-    //});
 
     var parseDate = function(str) {
         var dateParts = str.split('/');
@@ -316,29 +272,3 @@ jQuery(function ($) {
         });
     });
 });
-
-/*
- <style>
- html {
- background: url(/img/main-background.jpg) no-repeat center center fixed;
- -webkit-background-size: cover;
- -moz-background-size: cover;
- -o-background-size: cover;
- background-size: cover;
- }
-
- body {
- margin-top: 40px;
- font-size: 16px;
- background: transparent;
- }
-
- .panel {
- background-color: rgba(255, 255, 255, 0.9);
- }
-
- .well {
- background: rgba(240, 237, 239, 0.85);
- }
- </style>
- */

@@ -13,6 +13,7 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.nop.eshop.model.Movie;
+import org.nop.eshop.model.MoviePerson;
 import org.nop.eshop.search.SearchEntry;
 import org.nop.eshop.service.LuceneQueryBuilder;
 import org.nop.eshop.web.model.PagerResult;
@@ -139,13 +140,18 @@ public class MovieDAOImpl implements MovieDAO {
 
     @Override
     public void update(Movie movie) {
-        getCurrentSession().merge(movie);
+        getCurrentSession().update(movie);
     }
 
     @Override
     public void deleteById(Long id) {
         Object toDelete = getCurrentSession().load(Movie.class, id);
         getCurrentSession().delete(toDelete);
+    }
+
+    @Override
+    public void deleteMPRelation(MoviePerson mp) {
+        getCurrentSession().delete(mp);
     }
 
     @Override

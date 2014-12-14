@@ -156,6 +156,10 @@ body {
     border-radius: 10px;
 }
 
+.jerror {
+    background-color: rgba(247, 55, 21, 0.72) !important;
+}
+
 @media (max-width:767px) {
     #wrapper {
         padding-left: 70px;

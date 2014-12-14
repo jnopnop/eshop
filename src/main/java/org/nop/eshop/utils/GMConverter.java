@@ -116,6 +116,14 @@ public class GMConverter {
         return result;
     }
 
+    public static List<PersonWeb> toWebPersonModels(Collection<Person> persons) {
+        List<PersonWeb> result = new ArrayList<>();
+        for (Person p: persons) {
+            result.add(toWebPerson(p));
+        }
+        return result;
+    }
+
     public static PersonWeb toWebPerson(Person person) {
         PersonWeb result = new PersonWeb();
         result.setId(person.getId());

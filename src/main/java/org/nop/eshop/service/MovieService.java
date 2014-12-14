@@ -39,4 +39,8 @@ public interface MovieService {
     PagerResult<MovieWeb> getPaginated(Integer p);
 
     PersonWeb getPerson(long id);
+
+    void deleteComment(Long id);
+
+    PagerResult<PersonWeb> searchPersons(String q, Integer page);
 }

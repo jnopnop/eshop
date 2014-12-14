@@ -1,5 +1,6 @@
 package org.nop.eshop.model;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.search.annotations.*;
 import org.nop.eshop.search.TopRatingBoostStrategy;
 
@@ -43,6 +44,7 @@ public class Movie implements Comparable<Movie> {
     private String ageCategory;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @JoinTable(name="movies_genres",
             joinColumns = {@JoinColumn(name="movies_id", referencedColumnName="id")},
             inverseJoinColumns = {@JoinColumn(name="genres_id", referencedColumnName="id")})
@@ -61,7 +63,8 @@ public class Movie implements Comparable<Movie> {
     private Set<Country> countries = new HashSet<>();
 
     //TODO: Set proper cascade type
-    @OneToMany(mappedBy = "pk.movie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "pk.movie", fetch = FetchType.EAGER)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Set<MoviePerson> persons = new HashSet<>();
 
     public Long getId() {

@@ -1,11 +1,17 @@
 package org.nop.eshop.dao;
 
 
-import org.hibernate.Hibernate;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.*;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.search.FullTextQuery;
+import org.hibernate.search.FullTextSession;
+import org.hibernate.search.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.nop.eshop.model.Person;
+import org.nop.eshop.web.model.PagerResult;
+import org.nop.eshop.web.model.PersonWeb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -49,5 +55,50 @@ public class PersonDAOImpl implements PersonDAO {
     @Override
     public void save(Person person) {
         getCurrentSession().save(person);
+    }
+
+    @Override
+    public void update(Person p) {
+        getCurrentSession().saveOrUpdate(p);
+    }
+
+    @Override
+    public List<Person> fullTextSearch(String q, int start, Integer pageSize, PagerResult<PersonWeb> pager) {
+        FullTextSession fullTextSession = Search.getFullTextSession(getCurrentSession());
+        QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(Person.class).get();
+        org.apache.lucene.search.Query luceneQuery = queryBuilder
+                .keyword()
+                .fuzzy()
+                .withThreshold(0.7f)
+                .onField("fullname") //fields
+                .matching(q)
+                .createQuery();
+        FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, Person.class);
+        pager.setMaxResults(query.getResultSize());
+        return (List<Person>) query.setFirstResult(start).setMaxResults(pageSize).list();
+    }
+
+    @Override
+    public List<Person> search(int start, Integer pageSize, PagerResult<PersonWeb> pager) {
+        Criteria c = getCurrentSession().createCriteria(Person.class)
+                .add(Restrictions.in("id", getPaginatedIds(start, pageSize, pager)))
+                .addOrder(Order.asc("fullname"));
+
+        return c.list();
+    }
+
+    private List<Long> getPaginatedIds(int start, int max, PagerResult<?> pager) {
+        //Issue total count of records
+        Number total = (Number) getCurrentSession().createCriteria(Person.class).
+                setProjection(Projections.rowCount()).uniqueResult();
+
+        pager.setMaxResults((Long)total);
+
+        Criteria c = getCurrentSession().createCriteria(Person.class)
+                .setProjection(Projections.groupProperty("id"))
+                .addOrder(Order.asc("fullname"))
+                .setFirstResult(start)
+                .setMaxResults(max);
+        return (List<Long>)c.list();
     }
 }

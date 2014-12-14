@@ -1,10 +1,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>${movie.title}</title>
     <link rel="stylesheet" href="/css/movie.css">
+    <script src="/js/movie.js"></script>
 </head>
 <body>
     <%@ include file="common/navbar.jsp" %>
@@ -83,20 +85,25 @@
                     What people say about this movie
                 </div>
                 <c:forEach items="${movie.comments}" var="c">
-                    <hr/>
-                    <div class="row comment">
-                        <div class="col-md-12 comment-info">
-                            <img class="comment-image" src="/pic/users/${c.value.user.image}"/>
-                            <div class="comment-details">
-                                <span class="comment-title">${c.value.title}</span>
-                                <br/>
-                                <span class="comment-author">by ${c.value.user.fullname}</span>
+                    <div class="comment-section" id="${c.value.id}">
+                        <hr/>
+                        <div class="row comment">
+                            <div class="col-md-12 comment-info">
+                                <img class="comment-image" src="/pic/users/${c.value.user.image}"/>
+                                <div class="comment-details">
+                                    <sec:authorize ifAnyGranted="ROLE_ADMIN">
+                                        <span class="admin-delete"><a href="#" data-toggle="modal" data-target="#deleteCommentModal" data-comment-id="${c.value.id}">delete</a></span>
+                                    </sec:authorize>
+                                    <span class="comment-title">${c.value.title}</span>
+                                    <br/>
+                                    <span class="comment-author">by ${c.value.user.fullname}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <br/>
-                    <div class="row comment-text">
-                        <p>${c.value.text}</p>
+                        <br/>
+                        <div class="row comment-text">
+                            <p>${c.value.text}</p>
+                        </div>
                     </div>
                 </c:forEach>
             </div>
@@ -141,11 +148,24 @@
                                     <%--<div class="col-md-1 admin-controls">--%>
                                         <%--<sec:authorize ifAnyGranted="ROLE_ADMIN">--%>
                                             <%--<button data-id="${si.id}" type="button" class="edit-item">&hellip;</button>--%>
-                                            <%--<button data-id="${si.id}" type="button" class="delete-item">&times;</button>--%>
+                                            <%--<button data-id="${si.id}" type="button" class="deleteById-item">&times;</button>--%>
                                         <%--</sec:authorize>--%>
                                     <%--</div>--%>
                                 <%--</div>--%>
                 <%--</div>--%>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteCommentModal" tabindex="-1" role="dialog" aria-labelledby="deleteCommentModal" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Delete this comment?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="delete-comment-btn" type="button" class="btn btn-primary">OK</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>

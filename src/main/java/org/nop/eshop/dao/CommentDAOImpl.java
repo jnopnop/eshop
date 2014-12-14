@@ -43,4 +43,10 @@ public class CommentDAOImpl implements CommentDAO {
     public void save(Comment comment) {
         getCurrentSession().save(comment);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        Object toDelete = getCurrentSession().load(Comment.class, id);
+        getCurrentSession().delete(toDelete);
+    }
 }

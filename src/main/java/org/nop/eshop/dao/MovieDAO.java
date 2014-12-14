@@ -1,6 +1,7 @@
 package org.nop.eshop.dao;
 
 import org.nop.eshop.model.Movie;
+import org.nop.eshop.model.MoviePerson;
 import org.nop.eshop.search.SearchEntry;
 import org.nop.eshop.web.model.PagerResult;
 
@@ -16,6 +17,7 @@ public interface MovieDAO {
 
     void update(Movie movie);
     void deleteById(Long id);
+    void deleteMPRelation(MoviePerson mp);
 
     void save(Movie t);
     List<Movie> search(String q, String[] fields);

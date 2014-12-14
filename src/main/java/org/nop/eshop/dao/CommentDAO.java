@@ -13,4 +13,5 @@ public interface CommentDAO {
     Comment getByIMDBId(Long imdbId);
     Comment getByTitle(String title);
     void save(Comment t);
+    void deleteById(Long id);
 }

@@ -43,6 +43,9 @@ public class MovieServiceImpl implements MovieService {
     @Autowired
     private UserDAO userDAO;
 
+    @Autowired
+    private CommentDAO commentDAO;
+
     @Override
     @Transactional
     public PagerResult<MovieWeb> search(String q, Integer p) {
@@ -252,7 +255,6 @@ public class MovieServiceImpl implements MovieService {
         for (Genre d0: toRemove) {
             movie.getGenres().remove(d0);
             d0.getMovies().remove(movie);
-            genreDAO.update(d0);
         }
 
         Set<Long> newItems = new HashSet<Long>(CollectionUtils.disjunction(model.getGenres().keySet(), sameDeps));
@@ -260,49 +262,99 @@ public class MovieServiceImpl implements MovieService {
             Genre d = genreDAO.getById(l);
             d.getMovies().add(movie);
             movie.getGenres().add(d);
-            genreDAO.update(d);
         }
-
-
-//        Set<Genre> original = movie.getGenres();
-//        Set<Genre> toDetach = new HashSet<>();
-//
-//        Set<Genre> genres = new HashSet<>();
-//        for (Long id: model.getGenres().keySet()) {
-//            Genre c = genreDAO.getById(id);
-//            genres.add(c);
-//        }
-//        movie.setGenres(genres);
 
         //Persons
-        Set<MoviePerson> mpc = new HashSet<>();
-        for (Long id: model.getDirectors().keySet()) {
-            Person p = personDAO.getById(id);
-            MoviePerson mp = new MoviePerson();
-            mp.setPerson(p);
-            mp.setCareer(MovieService.PERSON_DIRECTOR);
-            mp.setMovie(movie);
-            mpc.add(mp);
-        }
-        for (Long id: model.getWriters().keySet()) {
-            Person p = personDAO.getById(id);
-            MoviePerson mp = new MoviePerson();
-            mp.setPerson(p);
-            mp.setCareer(MovieService.PERSON_WRITER);
-            mp.setMovie(movie);
-            mpc.add(mp);
-        }
-        for (Long id: model.getActors().keySet()) {
-            Person p = personDAO.getById(id);
-            MoviePerson mp = new MoviePerson();
-            mp.setPerson(p);
-            mp.setCareer(MovieService.PERSON_ACTOR);
-            mp.setMovie(movie);
-            mpc.add(mp);
-        }
-        movie.setPersons(mpc);
+        Set<MoviePerson> newPersons = new HashSet<>();
+        newPersons.addAll(updatePersons(movie, model.getDirectors(), MovieService.PERSON_DIRECTOR));
+        newPersons.addAll(updatePersons(movie, model.getWriters(), MovieService.PERSON_WRITER));
+        newPersons.addAll(updatePersons(movie, model.getActors(), MovieService.PERSON_ACTOR));
+//        Set<MoviePerson> mpc = new HashSet<>();
+//        Set<Long> samePersons = new HashSet<>();
+//        Set<MoviePerson> toDelete = new HashSet<>();
+//        for (MoviePerson mp: movie.getPersons()) {
+//            if (mp.getCareer().equalsIgnoreCase(MovieService.PERSON_DIRECTOR)) {
+//                if (model.getDirectors().containsKey(mp.getPerson().getId())) {
+//                    samePersons.add(mp.getPerson().getId());
+//                } else {
+//                    toDelete.add(mp);
+//                }
+//            }
+//        }
+//        for (MoviePerson p0: toDelete) {
+//            movie.getPersons().remove(p0);
+//            movieDAO.deleteMPRelation(p0);
+//        }
+//        newItems = new HashSet<Long>(CollectionUtils.disjunction(model.getDirectors().keySet(), samePersons));
+//        for (Long id: newItems) {
+//            Person p = personDAO.getById(id);
+//            MoviePerson mp = new MoviePerson();
+//            mp.setPerson(p);
+//            mp.setCareer(MovieService.PERSON_DIRECTOR);
+//            mp.setMovie(movie);
+//            personDAO.update(p);
+//            mpc.add(mp);
+//        }
+
+
+//        for (Long id: model.getDirectors().keySet()) {
+//            Person p = personDAO.getById(id);
+//            MoviePerson mp = new MoviePerson();
+//            mp.setPerson(p);
+//            mp.setCareer(MovieService.PERSON_DIRECTOR);
+//            mp.setMovie(movie);
+//            mpc.add(mp);
+//        }
+//        for (Long id: model.getWriters().keySet()) {
+//            Person p = personDAO.getById(id);
+//            MoviePerson mp = new MoviePerson();
+//            mp.setPerson(p);
+//            mp.setCareer(MovieService.PERSON_WRITER);
+//            mp.setMovie(movie);
+//            mpc.add(mp);
+//        }
+//        for (Long id: model.getActors().keySet()) {
+//            Person p = personDAO.getById(id);
+//            MoviePerson mp = new MoviePerson();
+//            mp.setPerson(p);
+//            mp.setCareer(MovieService.PERSON_ACTOR);
+//            mp.setMovie(movie);
+//            mpc.add(mp);
+//        }
+        movie.getPersons().addAll(newPersons);
 
         movieDAO.update(movie);
+    }
+
+    private Set<MoviePerson> updatePersons(Movie movie, Map<Long, String> persons, String role) {
+        Set<MoviePerson> mpc = new HashSet<>();
+        Set<Long> samePersons = new HashSet<>();
+        Set<MoviePerson> toDelete = new HashSet<>();
+        for (MoviePerson mp: movie.getPersons()) {
+            if (mp.getCareer().equalsIgnoreCase(role)) {
+                if (persons.containsKey(mp.getPerson().getId())) {
+                    samePersons.add(mp.getPerson().getId());
+                } else {
+                    toDelete.add(mp);
+                }
+            }
+        }
+        for (MoviePerson p0: toDelete) {
+            movie.getPersons().remove(p0);
+            movieDAO.deleteMPRelation(p0);
+        }
+        Set<Long> newItems = new HashSet<>(CollectionUtils.disjunction(persons.keySet(), samePersons));
+        for (Long id: newItems) {
+            Person p = personDAO.getById(id);
+            MoviePerson mp = new MoviePerson();
+            mp.setPerson(p);
+            mp.setCareer(role);
+            mp.setMovie(movie);
+            personDAO.update(p);
+            mpc.add(mp);
+        }
+
+        return mpc;
     }
 
     @Override
@@ -325,6 +377,29 @@ public class MovieServiceImpl implements MovieService {
     @Transactional
     public PersonWeb getPerson(long id) {
         return GMConverter.toWebPerson(personDAO.getById(id));
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long id) {
+        commentDAO.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public PagerResult<PersonWeb> searchPersons(String q, Integer page) {
+        page = currentPage(page);
+        PagerResult<PersonWeb> pager = new PagerResult<>();
+        pager.setCurrPage(page);
+
+        if (StringUtils.isNotBlank(q)) {
+            pager.setResults(GMConverter.toWebPersonModels(personDAO.fullTextSearch(q, (page - 1) * PagerResult.PAGE_SIZE, PagerResult.PAGE_SIZE, pager)));
+        } else {
+            pager.setResults(GMConverter.toWebPersonModels(personDAO.search((page - 1) * PagerResult.PAGE_SIZE, PagerResult.PAGE_SIZE, pager)));
+        }
+
+        pager.setLastPage(lastPage(pager.getMaxResults()));
+        return pager;
     }
 
     private Integer currentPage(Integer p) {

@@ -14,8 +14,7 @@
     <link href="/css/admin.css" rel="stylesheet">
 
     <script src="/js/chosen/chosen.jquery.min.js"></script>
-    <script src="/js/jgrowl/jgrowl.min.js"></script>
-    <script src="/js/admin.js"></script>
+    <script src="/js/admin_movies.js"></script>
 </head>
 <body>
     <%@ include file="common/admin_navbar.jsp" %>
@@ -115,11 +114,11 @@
                                             <a href="/movie/${si.id}" target="_blank"><h4 class="list-group-item-heading admin-movie-title">${si.title} (<fmt:formatDate value="${si.releaseDate}" type="DATE" pattern="yyyy"></fmt:formatDate>)</h4></a>
                                             <span class="admin-delete"><a href="#" data-toggle="modal" data-target="#deleteMovieModal" data-movie-id="${si.id}">delete</a></span>
                                             <span class="admin-edit"><a href="#" data-toggle="modal" data-target="#editMovieModal" data-movie-id="${si.id}">edit</a></span>
-                                        </div> <%-- /admin/delete/movie/${si.id} --%>
+                                        </div> <%-- /admin/deleteById/movie/${si.id} --%>
                                         <%--<div class="col-md-1 admin-controls">--%>
                                             <%--<sec:authorize ifAnyGranted="ROLE_ADMIN">--%>
                                                 <%--<button data-id="${si.id}" type="button" class="edit-item">&hellip;</button>--%>
-                                                <%--<button data-id="${si.id}" type="button" class="delete-item">&times;</button>--%>
+                                                <%--<button data-id="${si.id}" type="button" class="deleteById-item">&times;</button>--%>
                                             <%--</sec:authorize>--%>
                                         <%--</div>--%>
                                     </div>
@@ -154,120 +153,120 @@
                     <h4 class="modal-title" id="editMovieModalLabel">Edit Movie</h4>
                 </div>
                 <div class="modal-body">
-                    <form:form cssClass="form-horizontal" id="form-edit-movie" action="" commandName="m" method="put">
+                    <form Class="form-horizontal" id="form-edit-movie"method="put">
                         <fieldset>
                             <!-- Text input-->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="title">Title</form:label>
+                                <label class="col-md-2 control-label" for="mtitle">Title</label>
                                 <div class="col-md-10">
-                                    <form:input id="title" path="title" placeholder="" cssClass="form-control input-md"></form:input>
+                                    <input id="mtitle" name="mtitle" placeholder="" class="form-control input-md">
                                 </div>
                             </div>
 
                             <!-- Text input-->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="description">Description</form:label>
+                                <label class="col-md-2 control-label" for="mdescription">Description</label>
                                 <div class="col-md-10">
-                                    <form:textarea id="description" path="description" cssClass="form-control input-md"></form:textarea>
+                                    <textarea id="mdescription" name="mdescription" class="form-control input-md"></textarea>
                                 </div>
                             </div>
 
                             <!-- Text input-->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="duration">Duration</form:label>
+                                <label class="col-md-2 control-label" for="mduration">Duration</label>
                                 <div class="col-md-10">
-                                    <form:input id="duration" path="duration" cssClass="form-control input-md"></form:input>
+                                    <input id="mduration" name="mduration" class="form-control input-md">
                                 </div>
                             </div>
 
                             <!-- Text input-->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="releaseDate">Release Date</form:label>
+                                <label class="col-md-2 control-label" for="mreleaseDate">Release Date</label>
                                 <div class="col-md-10">
-                                    <form:input id="releaseDate" path="releaseDate" cssClass="form-control input-md"></form:input>
+                                    <input id="mreleaseDate" name="mreleaseDate" class="form-control input-md">
                                 </div>
                             </div>
 
                             <!-- Text input-->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="rating">Rating</form:label>
+                                <label class="col-md-2 control-label" for="mrating">Rating</label>
                                 <div class="col-md-10">
-                                    <form:input id="rating" path="rating" cssClass="form-control input-md"></form:input>
+                                    <input id="mrating" name="mrating" class="form-control input-md">
                                 </div>
                             </div>
 
                             <!-- Text input-->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="imageURL">Poster Picture</form:label>
+                                <label class="col-md-2 control-label" for="mimageURL">Poster Picture</label>
                                 <div class="col-md-10">
-                                    <form:input id="imageURL" path="imageURL" cssClass="form-control input-md"></form:input>
+                                    <input id="mimageURL" name="mimageURL" class="form-control input-md">
                                 </div>
                             </div>
 
                             <!-- Text input-->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="imdbId">IMDB ID</form:label>
+                                <label class="col-md-2 control-label" for="mimdbId">IMDB ID</label>
                                 <div class="col-md-10">
-                                    <form:input id="imdbId" path="imdbId" cssClass="form-control input-md"></form:input>
+                                    <input id="mimdbId" name="mimdbId" class="form-control input-md">
                                     <span class="help-block">optional</span>
                                 </div>
                             </div>
 
                             <!-- Select Basic -->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="ageCategory">Age Category</form:label>
+                                <label class="col-md-2 control-label" for="mageCategory">Age Category</label>
                                 <div class="col-md-10">
-                                    <form:select id="ageCategory" path="ageCategory" cssClass="form-control">
-                                    </form:select>
+                                    <select id="mageCategory" name="mageCategory" class="form-control">
+                                    </select>
                                 </div>
                             </div>
 
                             <!-- Select Multiple -->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="genres">Genres</form:label>
+                                <label class="col-md-2 control-label" for="mgenres">Genres</label>
                                 <div class="col-md-10">
-                                    <form:select id="genres" path="genres" cssClass="form-control" multiple="multiple">
-                                    </form:select>
+                                    <select id="mgenres" name="mgenres" class="form-control" multiple="multiple">
+                                    </select>
                                 </div>
                             </div>
 
                             <!-- Select Multiple -->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="countries">Countries</form:label>
+                                <label class="col-md-2 control-label" for="mcountries">Countries</label>
                                 <div class="col-md-10">
-                                    <form:select id="countries" path="countries" cssClass="form-control" multiple="multiple">
-                                    </form:select>
+                                    <select id="mcountries" name="mcountries" class="form-control" multiple="multiple">
+                                    </select>
                                 </div>
                             </div>
 
                             <!-- Select Multiple -->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="directors">Directors</form:label>
+                                <label class="col-md-2 control-label" for="mdirectors">Directors</label>
                                 <div class="col-md-10">
-                                    <form:select id="directors" path="directors" cssClass="form-control" multiple="multiple">
-                                    </form:select>
+                                    <select id="mdirectors" name="mdirectors" class="form-control" multiple="multiple">
+                                    </select>
                                 </div>
                             </div>
 
                             <!-- Select Multiple -->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="writers">Writers</form:label>
+                                <label class="col-md-2 control-label" for="mwriters">Writers</label>
                                 <div class="col-md-10">
-                                    <form:select id="writers" path="writers" cssClass="form-control" multiple="multiple">
-                                    </form:select>
+                                    <select id="mwriters" name="mwriters" class="form-control" multiple="multiple">
+                                    </select>
                                 </div>
                             </div>
 
                             <!-- Select Multiple -->
                             <div class="form-group">
-                                <form:label cssClass="col-md-2 control-label" path="actors">Actors</form:label>
+                                <label class="col-md-2 control-label" for="mactors">Actors</label>
                                 <div class="col-md-10">
-                                    <form:select id="actors" path="actors" cssClass="form-control" multiple="multiple">
-                                    </form:select>
+                                    <select id="mactors" name="mactors" class="form-control" multiple="multiple">
+                                    </select>
                                 </div>
                             </div>
                         </fieldset>
-                    </form:form>
+                    </form>
                     <%--<form role="form">--%>
                         <%--<div class="form-group">--%>
                             <%--<label for="recipient-name" class="control-label">Recipient:</label>--%>
