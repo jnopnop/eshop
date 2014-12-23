@@ -1,6 +1,5 @@
 package org.nop.eshop.service;
 
-import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,20 +8,14 @@ import org.jsoup.select.Elements;
 import org.nop.eshop.dao.*;
 import org.nop.eshop.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class IMDBScraperServiceImpl implements IMDBScraperService {
@@ -59,41 +52,8 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
     @Autowired
     private RoleDAO roleDAO;
 
-    public String saveImage(String imgUrl, String path, String filename) throws MalformedURLException, InterruptedException {
-        String extension = imgUrl.substring(imgUrl.lastIndexOf('.'));
-        URL url = new URL(imgUrl);
-        InputStream is = null;
-        int delay = 1;
-        while (true) {
-            try {
-                Thread.sleep(100 * delay);
-                delay += 50;
-                is = url.openStream();
-                break;
-            } catch (IOException e) {
-                if (delay > 500) {
-                    LOG.error("Too much time waiting for response for image. Shutting down...");
-                    if (is != null) {
-                        IOUtils.closeQuietly(is);
-                    }
-                    return null;
-                }
-            }
-        }
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(path + filename + extension);
-            IOUtils.copy(is, os);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (is != null)
-                IOUtils.closeQuietly(is);
-            if (os != null)
-                IOUtils.closeQuietly(os);
-        }
-        return extension;
-    }
+    @Autowired
+    private ImageService imageService;
 
     private Movie scrapBasicMovieInfo(Element e) {
         Movie movie = new Movie();
@@ -143,11 +103,10 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
         return imdbMovieURL(id) + "reviews";
     }
 
-    //@Scheduled(fixedDelay = 3600000L)
+    @Scheduled(fixedDelay = 3600000L)
     @Transactional
     public synchronized void execute () throws IOException, ParseException {
-        for (int i = 0; i < 2; i++) {
-            //int i = 0;
+        for (int i = 0; i < 5; i++) {
             Document pageI = getIMDBDocument(IMDB_SEARCH.replace(START_ITEM, String.valueOf(50 * i + 1)));
             Elements searchResults = pageI.select("tr.detailed>td.title");
             for (Element e: searchResults) {
@@ -199,18 +158,10 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
                 u.setFullname(username);
 
                 String userPic = userLinks.select("img").attr("src");
-                String ext = null;
-                String filename = username.replaceAll("\\s","");
-                try {
-                    ext = saveImage(userPic, USER_IMG_HOME, filename);
-                } catch (Exception e) {
-                    continue;
-                }
-                if (ext != null) {
-                    u.setImage(filename + ext);
-                }
+                Image image = new Image(ImageService.IMAGE_TYPE_PRIMARY);
+                u.getImages().add(image);
                 userDAO.createUser(u);
-
+                imageService.upload(userPic, DEFAULT_CONNECTION_TIMEOUT, ImageService.ENTITY_USER, image);
             }
 
             //Comment
@@ -244,14 +195,27 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
         basicMovie.setReleaseDate(releaseDate);
 
         String imgURL = moviePage.select("#img_primary img").attr("src");
-        String ext = null;
-        String filename = basicMovie.getImdbId().replaceAll("\\s","");
-        try {
-            ext = saveImage(imgURL, MOVIE_IMG_HOME, filename);
-            if (ext != null)
-                basicMovie.setImageURL(filename + ext);
-        } catch (Exception e) {
+        //#####################
+        Map<String, Image> imagesToUpload = new HashMap<>();
+        Image image = new Image(ImageService.IMAGE_TYPE_PRIMARY);
+        imagesToUpload.put(imgURL, image);
+
+        Elements carouselImgs = moviePage.select("div.mediastrip a[itemprop=thumbnailUrl]");
+        for (Element currImage: carouselImgs) {
+            Document currImagePage = getIMDBDocument(IMDB_HOME+currImage.attr("href"));
+            if (currImagePage == null)
+                continue;
+            Elements bi = currImagePage.select("#primary-img");
+            if ( bi != null && bi.size() > 0) {
+                String nimgURL = bi.get(0).attr("src");
+                Image nimage = new Image(ImageService.IMAGE_TYPE_CAROUSEL);
+                imagesToUpload.put(nimgURL, nimage);
+            }
         }
+        basicMovie.getImages().addAll(imagesToUpload.values());
+        movieDAO.save(basicMovie);
+        imageService.upload(imagesToUpload, DEFAULT_CONNECTION_TIMEOUT, ImageService.ENTITY_MOVIE);
+        //#####################
 
         Elements countries = moviePage.select("a[itemprop=url][href^=/country/]");
         if (!countries.isEmpty()) {
@@ -334,20 +298,12 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
 
     private Document getIMDBDocument(String URL) {
         Document result = null;
-        int delay = 1;
-        while (true) {
-            try {
-                Thread.sleep(100 * delay);
-                delay += 50;
-                result = Jsoup.connect(URL).get();
-                break;
-            } catch (Exception e) {
-                LOG.error("Error getting URL + " + URL);
-                if (delay > 500) {
-                    LOG.error("Too much time waiting for response from [" + URL + "]. Shutting down...");
-                    return null;
-                }
-            }
+        try {
+            result = Jsoup.connect(URL).timeout(DEFAULT_CONNECTION_TIMEOUT).get();
+        } catch (Exception e) {
+            LOG.error("Error getting URL + " + URL);
+            return null;
+
         }
         return result;
     }
@@ -371,17 +327,31 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
             }
         }
 
+        Map<String, Image> imagesToUpload = new HashMap<>();
         bi = person.select("td#img_primary img");
         if ( bi != null && bi.size() > 0) {
             String imgURL = bi.get(0).attr("src");
-            try {
-                String filename = p.getImdbId().replaceAll("\\s","");
-                String ext = saveImage(imgURL, PERSON_IMG_HOME, filename);
-                if (ext != null)
-                    p.setPhotoURL(filename + ext);
-            } catch (Exception e) {}
+            Image image = new Image(ImageService.IMAGE_TYPE_PRIMARY);
+            imagesToUpload.put(imgURL, image);
         }
 
+        Elements carouselImgs = person.select("div.mediastrip a[itemprop=thumbnailUrl]");
+        for (Element currImage: carouselImgs) {
+            //primary-img
+            Document currImagePage = getIMDBDocument(IMDB_HOME+currImage.attr("href"));
+            if (currImagePage == null)
+                continue;
+            bi = currImagePage.select("#primary-img");
+            if ( bi != null && bi.size() > 0) {
+                String imgURL = bi.get(0).attr("src");
+                Image image = new Image(ImageService.IMAGE_TYPE_CAROUSEL);
+                imagesToUpload.put(imgURL, image);
+            }
+        }
+
+        p.getImages().addAll(imagesToUpload.values());
+        personDAO.save(p);
+        imageService.upload(imagesToUpload, DEFAULT_CONNECTION_TIMEOUT, ImageService.ENTITY_PERSON);
         return p;
     }
 }
