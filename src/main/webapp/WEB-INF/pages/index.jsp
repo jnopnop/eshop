@@ -112,6 +112,11 @@
                                 </c:choose>
 
                             </li>
+                            <form method="post" action="/form" enctype="multipart/form-data">
+                                <input type="text" name="name"/>
+                                <input type="file" name="file"/>
+                                <a href="#" id="up-image">submit</a>
+                            </form>
                         </ul>
                     </div>
                     <div class="list-group">
@@ -122,47 +127,44 @@
                             <c:otherwise>
                                 <c:forEach items="${movies.results}" var="si">
                                     <div class="list-group-item row">
-                                        <div class="media col-md-2">
+                                        <div class="media col-md-4" style="width:auto;">
                                             <figure class="pull-left">
-                                                <img style="width:150px;" class="img-responsive img-thumbnail" src="/pic/movies/${si.imageURL}">
+                                                <img class="img-responsive img-thumbnail" src="${si.mainImage}"><!--style="width:150px;"-->
                                             </figure>
                                         </div>
-                                        <div class="col-md-9">
+                                        <div class="col-md-8">
                                             <a href="/movie/${si.id}" target="_blank"><h4 class="list-group-item-heading">${si.title} (<fmt:formatDate value="${si.releaseDate}" type="DATE" pattern="yyyy"></fmt:formatDate>)</h4></a>
                                             <span class="rate" data-imdbrating="${si.rating}"></span>
                                             <span class="movie-rating">(${si.rating}/10)</span>
                                             <br/>
                                             <span class="movie-duration"><b><i>${si.duration} min</i></b></span>
-                                            <div class="movie-genres">
+                                            <ul class="horizontal-list movie-genres">
                                                 <c:forEach items="${si.genres}" var="g">
-                                                    <a href="/movies/search?genres=${g.value}">${g.value}</a>
+                                                    <li><a href="/movies/search?genres=${g.value}">${g.value}</a></li>
                                                 </c:forEach>
-                                            </div>
-                                            <div class="movie-countries">
+                                            </ul>
+                                            <ul class="horizontal-list movie-countries">
                                                 <c:forEach items="${si.countries}" var="c">
-                                                    <a href="/movies/search?country=${c.value}"><i>${c.value}</i>&nbsp;</a>
+                                                    <li><a href="/movies/search?country=${c.value}"><i>${c.value}</i></a></li>
                                                 </c:forEach>
-                                            </div>
+                                            </ul>
                                             <p class="list-group-item-text">
                                                     ${fn:substring(si.description, 0, 360)}...
                                             </p>
                                             <div class="movie-persons">
-                                                Directed by:
-                                                <c:forEach items="${si.directors}" var="d">
-                                                    <a href="/person/${d.key}" target="_blank">${d.value}&NonBreakingSpace;</a>
-                                                </c:forEach>
-                                                <br/>
-                                                Main roles:
-                                                <c:forEach items="${si.actors}" var="a">
-                                                    <a href="/person/${a.key}" target="_blank">${a.value}&NonBreakingSpace;</a>
-                                                </c:forEach>
+                                                <span class="pull-left">Directed by:&nbsp;</span>
+                                                <ul class="horizontal-list">
+                                                    <c:forEach items="${si.directors}" var="d">
+                                                        <li><a href="/person/${d.key}" target="_blank">${d.value}</a></li>
+                                                    </c:forEach>
+                                                </ul>
+                                                <span class="pull-left">Main roles:&nbsp;</span>
+                                                <ul class="horizontal-list">
+                                                    <c:forEach items="${si.actors}" var="a">
+                                                        <li><a href="/person/${a.key}" target="_blank">${a.value}</a></li>
+                                                    </c:forEach>
+                                                </ul>
                                             </div>
-                                        </div>
-                                        <div class="col-md-1 admin-controls">
-                                            <sec:authorize ifAnyGranted="ROLE_ADMIN">
-                                                <button data-id="${si.id}" type="button" class="edit-item">&hellip;</button>
-                                                <button data-id="${si.id}" type="button" class="delete-item">&times;</button>
-                                            </sec:authorize>
                                         </div>
                                     </div>
                                 </c:forEach>

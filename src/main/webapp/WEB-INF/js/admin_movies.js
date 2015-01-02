@@ -1,10 +1,7 @@
-/**
- * Created by nop on 15/10/14.
- */
 var allData = {fresh: false};
 
 var fillMovieData = function (id) {
-    $.get('/admin/movie/'+id, function (data) {
+    $.get('/admin/movies/'+id, function (data) {
         $('#mtitle').val(data.title);
         $('#mdescription').val(data.description);
         $('#mrating').val(data.rating);
@@ -84,7 +81,7 @@ var populateEditForm = function(data, handler, arg0) {
 };
 
 var refreshAllData = function (handler, arg0, arg1) {
-    $.get('/admin/movies/alldata', function (data) {
+    $.get('/admin/movies/info', function (data) {
         allData['genres'] = data['genres'];
         allData['categories'] = data['categories'];
         allData['countries'] = data['countries'];
@@ -101,11 +98,10 @@ jQuery(function ($) {
     $('#search-form').removeClass('in');
 
     $('#editMovieModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var ID = button.data('movie-id') // Extract info from data-* attributes
+        var button = $(event.relatedTarget);
+        var ID = button.data('movie-id');
 
         $('#edit-movie-btn').data('movie-id', ID);
-        $(this).find('form#form-edit-movie').attr('action', '/admin/edit/movie/'+ID);
 
         if (!allData['fresh']) {
             refreshAllData(populateEditForm, fillMovieData, ID);

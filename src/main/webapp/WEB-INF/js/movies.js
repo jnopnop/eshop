@@ -11,4 +11,21 @@ jQuery(function ($) {
     });
 
     $('.chzn').chosen({allow_single_deselect: true});
+
+    $('#up-image').click(function(){
+        var formData = new FormData($(this).closest('form')[0]);
+        $.ajax({
+            url: '/form',
+            type: 'POST',
+            data: formData,
+            //async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            error: function(){
+                alert("error in ajax form submission");
+            }
+        });
+
+    });
 });

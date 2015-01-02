@@ -11,9 +11,11 @@
 
     <link href="/css/chosen/chosen.min.css" rel="stylesheet">
     <link href="/css/jgrowl/jgrowl.min.css" rel="stylesheet">
+    <link href="/css/datepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="/css/admin.css" rel="stylesheet">
 
     <script src="/js/chosen/chosen.jquery.min.js"></script>
+    <script src="/js/datepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="/js/admin_movies.js"></script>
 </head>
 <body>
