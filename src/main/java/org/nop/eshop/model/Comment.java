@@ -1,10 +1,11 @@
 package org.nop.eshop.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name="comments")
-public class Comment {
+public class Comment implements Comparable<Comment> {
 
     @Id
     @GeneratedValue
@@ -19,6 +20,10 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movies_id")
     private Movie movie;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "createdOn", insertable=false)
+    private Date createdOn;
 
     public Long getId() {
         return id;
@@ -58,5 +63,18 @@ public class Comment {
 
     public void setMovie(Movie movie) {
         this.movie = movie;
+    }
+
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    @Override
+    public int compareTo(Comment o) {
+        return o.getCreatedOn().compareTo(this.createdOn);
     }
 }

@@ -1,7 +1,9 @@
 package org.nop.eshop.web.model;
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public class MovieWeb {
@@ -11,7 +13,8 @@ public class MovieWeb {
     private Integer duration;
     private Date releaseDate;
     private Float rating;
-    private String imageURL;
+    private String mainImage;
+    private List<String> carouselImages = new ArrayList<>();
     private String imdbId;
     private String ageCategory;
     private Map<Long, String> genres;
@@ -77,14 +80,6 @@ public class MovieWeb {
         this.rating = rating;
     }
 
-    public String getImageURL() {
-        return imageURL;
-    }
-
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
-    }
-
     public String getImdbId() {
         return imdbId;
     }
@@ -139,5 +134,21 @@ public class MovieWeb {
 
     public void setComments(Map<Long, CommentWeb> comments) {
         this.comments = comments;
+    }
+
+    public String getMainImage() {
+        return mainImage;
+    }
+
+    public void setMainImage(String mainImage) {
+        this.mainImage = mainImage;
+    }
+
+    public List<String> getCarouselImages() {
+        return carouselImages;
+    }
+
+    public void setCarouselImages(List<String> carouselImages) {
+        this.carouselImages = carouselImages;
     }
 }

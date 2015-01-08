@@ -4,9 +4,7 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -24,8 +22,12 @@ public class Person {
     @Field
     private Date birthdate;
 
-    @Column(name="photo_url")
-    private String photoURL;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "image_container", joinColumns = {
+            @JoinColumn(name = "entity_id")}, inverseJoinColumns = {
+            @JoinColumn(name = "images_id")
+    })
+    private List<Image> images = new ArrayList<>();
 
     @Column(name="imdb_id")
     private String imdbId;
@@ -65,12 +67,12 @@ public class Person {
         this.birthdate = birthdate;
     }
 
-    public String getPhotoURL() {
-        return photoURL;
+    public List<Image> getImages() {
+        return images;
     }
 
-    public void setPhotoURL(String photoURL) {
-        this.photoURL = photoURL;
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
 
     public String getImdbId() {

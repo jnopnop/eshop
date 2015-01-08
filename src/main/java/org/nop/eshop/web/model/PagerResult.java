@@ -10,6 +10,7 @@ public class PagerResult<T> {
     private int currPage;
     private int lastPage;
     private long maxResults = -1;
+    private int pageSize;
 
     public Collection<T> getResults() {
         return results;
@@ -41,5 +42,9 @@ public class PagerResult<T> {
 
     public void setMaxResults(long maxResults) {
         this.maxResults = maxResults;
+    }
+
+    public static Integer getPageSize() {
+        return PAGE_SIZE;
     }
 }

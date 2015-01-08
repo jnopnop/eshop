@@ -21,4 +21,6 @@ public interface PersonDAO {
     List<Person> fullTextSearch(String q, int page, Integer pageSize, PagerResult<PersonWeb> pager);
 
     List<Person> search(int start, Integer pageSize, PagerResult<PersonWeb> pager);
+
+    void deleteById(Long id);
 }

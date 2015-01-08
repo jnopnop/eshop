@@ -6,6 +6,7 @@ public class CommentWeb {
     private String title;
     private String text;
     private UserWeb user;
+    private MovieWeb movie;
 
     public Long getId() {
         return id;
@@ -37,5 +38,13 @@ public class CommentWeb {
 
     public void setUser(UserWeb user) {
         this.user = user;
+    }
+
+    public MovieWeb getMovie() {
+        return movie;
+    }
+
+    public void setMovie(MovieWeb movie) {
+        this.movie = movie;
     }
 }

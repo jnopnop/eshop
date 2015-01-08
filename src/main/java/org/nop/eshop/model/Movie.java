@@ -5,9 +5,7 @@ import org.hibernate.search.annotations.*;
 import org.nop.eshop.search.TopRatingBoostStrategy;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "movies")
@@ -35,8 +33,12 @@ public class Movie implements Comparable<Movie> {
     @Field(store = Store.COMPRESS, index = Index.NO)
     private Float rating;
 
-    @Field(store = Store.COMPRESS, index = Index.NO)
-    private String imageURL;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "image_container", joinColumns = {
+            @JoinColumn(name = "entity_id")}, inverseJoinColumns = {
+            @JoinColumn(name = "images_id")
+    })
+    private List<Image> images = new ArrayList<>();
 
     private String imdbId;
 
@@ -54,7 +56,6 @@ public class Movie implements Comparable<Movie> {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "movie")
     private Set<Comment> comments = new HashSet<>();
 
-    //TODO: Set proper cascade type
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="movies_countries",
             joinColumns = {@JoinColumn(name="movies_id", referencedColumnName="id")},
@@ -62,7 +63,6 @@ public class Movie implements Comparable<Movie> {
     @IndexedEmbedded(depth = 1)
     private Set<Country> countries = new HashSet<>();
 
-    //TODO: Set proper cascade type
     @OneToMany(mappedBy = "pk.movie", fetch = FetchType.EAGER)
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Set<MoviePerson> persons = new HashSet<>();
@@ -123,12 +123,12 @@ public class Movie implements Comparable<Movie> {
         this.rating = rating;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public List<Image> getImages() {
+        return images;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
 
     public String getAgeCategory() {

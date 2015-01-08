@@ -22,9 +22,11 @@ public interface ImageService {
     byte[] getImage(String entity, String filename) throws FileNotFoundException;
     void update(String type, Long id, byte[] file) throws IOException;
     void delete(String type, Long id) throws IOException;
-    void upload(byte[] file, String forEntity, String ofType) throws IOException;
+    Image upload(byte[] file, String forEntity, String ofType) throws IOException;
     void upload(byte[] file, String forEntity, Image image) throws IOException;
     void upload(String externalURL, int timeout, String forEntity, Image image) throws IOException;
     void upload(Map<String, Image> images, int timeout, String forEntity);
+
+    void deleteImage(String etype, String name) throws IOException;
     //String URLFor(Image image, String entity);
 }

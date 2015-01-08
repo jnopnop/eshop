@@ -1,14 +1,17 @@
 package org.nop.eshop.web.model;
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 public class PersonWeb {
     private Long id;
     private String fullname;
     private Date birthdate;
-    private String photoURL;
+    private String mainImage;
+    private List<String> carouselImages = new ArrayList<>();
     private String imdbId;
     private Set<MovieWeb> directorAt;
     private Set<MovieWeb> writerAt;
@@ -38,12 +41,20 @@ public class PersonWeb {
         this.birthdate = birthdate;
     }
 
-    public String getPhotoURL() {
-        return photoURL;
+    public String getMainImage() {
+        return mainImage;
     }
 
-    public void setPhotoURL(String photoURL) {
-        this.photoURL = photoURL;
+    public void setMainImage(String mainImage) {
+        this.mainImage = mainImage;
+    }
+
+    public List<String> getCarouselImages() {
+        return carouselImages;
+    }
+
+    public void setCarouselImages(List<String> carouselImages) {
+        this.carouselImages = carouselImages;
     }
 
     public String getImdbId() {

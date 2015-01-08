@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 @Service
@@ -54,11 +56,12 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     @Transactional
-    public synchronized void upload(byte[] file, String forEntity, String ofType) throws IOException {
+    public synchronized Image upload(byte[] file, String forEntity, String ofType) throws IOException {
         Image i = new Image();
         i.setType(ofType);
         imageDAO.saveOrUpdate(i);
         upload(file, forEntity, i);
+        return i;
     }
 
     @Override
@@ -86,6 +89,14 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
+    @Override
+    @Transactional
+    public void deleteImage(String etype, String name) throws IOException {
+        Long id = Long.valueOf(name.replaceAll("\\D", ""));
+        imageDAO.delete(id);
+        delete(path(etype, id));
+    }
+
     private void save(byte[] data, String path) throws IOException {
         File file = new File(path);
 
@@ -99,6 +110,10 @@ public class ImageServiceImpl implements ImageService {
         } catch (IOException e) {
             throw new IOException("Can not save image: " + e.getLocalizedMessage());
         }
+    }
+
+    private void delete(String filename) throws IOException {
+        Files.delete(Paths.get(filename));
     }
 
     private String path(String entity, Long id) {

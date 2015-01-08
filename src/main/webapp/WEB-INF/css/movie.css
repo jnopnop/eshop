@@ -1,0 +1,97 @@
+.movie-title {
+    margin-top: 0px;
+    float: left;
+    font-size: xx-large;
+}
+
+.movie-info {
+    font-size: larger;
+    line-height: 27px;
+    padding-left: 0px;
+}
+
+.movie-image {
+    padding-left: 0px;
+}
+
+.movie-basic-info {
+    margin-bottom: 20px;
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.movie-header {
+    margin-bottom: 73px;
+}
+
+/*.well.movie {*/
+    /*background-color: rgba(245, 245, 245, 0.80);*/
+/*}*/
+
+.comment-section>hr {
+    margin-top: 0px;
+}
+
+.comment-image {
+    float: left;
+    padding-right: 10px;
+}
+
+.comment-info {
+    padding-left: 0px;
+}
+
+.comment-title {
+    font-size: medium;
+}
+
+.comment-author {
+    font-style: italic;
+    font-size: small;
+}
+
+.admin-delete,.admin-edit {
+    float: right;
+}
+
+.admin-edit {
+    margin-right: 10px;
+}
+
+.admin-movie-title {
+    float: left;
+}
+
+/*.admin-delete>a,.admin-edit>a {*/
+    /*border-bottom: 1px dashed;*/
+/*}*/
+
+/*.admin-delete>a:hover,.admin-edit>a:hover {*/
+    /*text-decoration: none;*/
+    /*border-bottom: none;*/
+/*}*/
+
+.carousel {
+    overflow: hidden;
+}
+.carousel .item {
+    -webkit-transition: opacity 1s;
+    -moz-transition: opacity 1s;
+    -ms-transition: opacity 1s;
+    -o-transition: opacity 1s;
+    transition: opacity 1s;
+}
+.carousel .active.left, .carousel .active.right {
+    left:0;
+    opacity:0;
+    z-index:2;
+}
+.carousel .next, .carousel .prev {
+    left:0;
+    opacity:1;
+    z-index:1;
+}

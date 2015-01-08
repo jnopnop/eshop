@@ -19,6 +19,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -93,7 +95,7 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
                 User.class, Role.class, Person.class,
                 MoviePersonId.class, MoviePerson.class,
                 Movie.class, Genre.class, Country.class,
-                Comment.class);
+                Comment.class, News.class, Image.class);
         sessionBuilder.addPackage("org.nop.eshop.model");
         return sessionBuilder.buildSessionFactory();
     }
@@ -132,6 +134,7 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/img/**").addResourceLocations("/WEB-INF/img/");
         registry.addResourceHandler("/js/**").addResourceLocations("/WEB-INF/js/");
         registry.addResourceHandler("/fonts/**").addResourceLocations("/WEB-INF/fonts/");
+        registry.addResourceHandler("/ckeditor/**").addResourceLocations("/WEB-INF/ckeditor/");
         registry.addResourceHandler("/decorators/**").addResourceLocations("/WEB-INF/decorators/");
     }
 
@@ -144,6 +147,11 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
         supportedMediaTypes.add(MediaType.IMAGE_GIF);
         byteArrayHttpMessageConverter.setSupportedMediaTypes(supportedMediaTypes);
         return byteArrayHttpMessageConverter;
+    }
+
+    @Bean
+    public MultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
     }
 
     @Bean(name = "taskExecutor")

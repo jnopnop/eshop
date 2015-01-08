@@ -32,4 +32,10 @@ public class ImageDAOImpl implements ImageDAO {
     public void saveOrUpdate(Image i) {
         getCurrentSession().saveOrUpdate(i);
     }
+
+    @Override
+    public void delete(Long id) {
+        Object toDelete = getCurrentSession().load(Image.class, id);
+        getCurrentSession().delete(toDelete);
+    }
 }

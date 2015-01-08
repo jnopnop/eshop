@@ -8,7 +8,6 @@ import org.jsoup.select.Elements;
 import org.nop.eshop.dao.*;
 import org.nop.eshop.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -103,10 +102,10 @@ public class IMDBScraperServiceImpl implements IMDBScraperService {
         return imdbMovieURL(id) + "reviews";
     }
 
-    @Scheduled(fixedDelay = 3600000L)
+    //@Scheduled(fixedDelay = 3600000L)
     @Transactional
     public synchronized void execute () throws IOException, ParseException {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             Document pageI = getIMDBDocument(IMDB_SEARCH.replace(START_ITEM, String.valueOf(50 * i + 1)));
             Elements searchResults = pageI.select("tr.detailed>td.title");
             for (Element e: searchResults) {

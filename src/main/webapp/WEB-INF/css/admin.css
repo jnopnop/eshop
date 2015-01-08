@@ -1,0 +1,47 @@
+.admin-delete,.admin-edit {
+    float: right;
+    font-size: x-large;
+}
+
+.admin-edit {
+    margin-right: 10px;
+}
+
+.admin-movie-title {
+    float: left;
+}
+
+.admin-delete>a,.admin-edit>a {
+    /*border-bottom: 1px dashed;*/
+}
+
+.admin-delete>a:hover,.admin-edit>a:hover {
+    text-decoration: none;
+    border-bottom: none;
+}
+
+.chosen-container
+{
+    width: 100% !important;
+}
+
+.news-image {
+    width: 100%;
+}
+
+.admin-images>.item {
+    float: left;
+}
+
+.admin-images img {
+    -webkit-filter: grayscale(1);
+    filter: gray;
+    filter: grayscale(1);
+}
+
+.delete-image {
+    color: #ff0000;
+    position: absolute;
+    top: 3px;
+    left: 5px;
+}

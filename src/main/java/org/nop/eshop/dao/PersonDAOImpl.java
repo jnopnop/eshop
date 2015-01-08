@@ -87,6 +87,12 @@ public class PersonDAOImpl implements PersonDAO {
         return c.list();
     }
 
+    @Override
+    public void deleteById(Long id) {
+        Object toDelete = getCurrentSession().load(Person.class, id);
+        getCurrentSession().delete(toDelete);
+    }
+
     private List<Long> getPaginatedIds(int start, int max, PagerResult<?> pager) {
         //Issue total count of records
         Number total = (Number) getCurrentSession().createCriteria(Person.class).

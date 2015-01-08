@@ -9,4 +9,6 @@ public interface ImageDAO {
     Image get(Long id);
     List<Image> get();
     void saveOrUpdate(Image i);
+
+    void delete(Long id);
 }

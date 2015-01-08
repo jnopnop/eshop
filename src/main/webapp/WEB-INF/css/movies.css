@@ -12,9 +12,17 @@
     color: #8a8a8a;
 }
 
+.movie-image {
+    max-width: 224px;
+}
+
 div.list-group-item:hover, div.list-group-item:focus {
     border-left:10px solid #797778;;
     border-right:10px solid #797778;;
+}
+
+.list-group-item-heading {
+    font-size: x-large;
 }
 
 div.list-group-item {

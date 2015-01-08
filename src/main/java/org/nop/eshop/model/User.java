@@ -1,7 +1,9 @@
 package org.nop.eshop.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,7 +19,12 @@ public class User {
 
     private String fullname;
 
-    private String image;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "image_container", joinColumns = {
+            @JoinColumn(name = "entity_id")}, inverseJoinColumns = {
+            @JoinColumn(name = "images_id")
+    })
+    private List<Image> images = new ArrayList<>();
 
     @ManyToMany(cascade=CascadeType.ALL)
     @JoinTable(name="users_roles",
@@ -28,12 +35,12 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Comment> comments = new HashSet<>();
 
-    public String getImage() {
-        return image;
+    public List<Image> getImages() {
+        return images;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
 
     public Integer getId() {
