@@ -17,9 +17,7 @@ public class SpringWebAppInitializer implements WebApplicationInitializer {
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext appContext = new AnnotationConfigWebApplicationContext();
         appContext.register(ApplicationContextConfig.class);
-
         servletContext.addListener(new ContextLoaderListener(appContext));
-        servletContext.addFilter("sitemesh", new CustomSiteMeshFilter()).addMappingForUrlPatterns(null, false, "/*");
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet(
                 "SpringDispatcher", new DispatcherServlet(appContext));

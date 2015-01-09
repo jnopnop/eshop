@@ -9,6 +9,7 @@
 
     <properties>
         <spring.version>4.1.0.RELEASE</spring.version>
+        <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
         <hibernate.version>4.2.0.Final</hibernate.version>
         <mysql.connector.version>5.1.6</mysql.connector.version>
@@ -147,6 +148,13 @@
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
             <version>3.2.1</version>
+        </dependency>
+
+        <!-- Thymeleaf template engine -->
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring4</artifactId>
+            <version>${thymeleaf.version}</version>
         </dependency>
 
         <dependency>

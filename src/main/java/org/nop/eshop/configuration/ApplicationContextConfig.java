@@ -24,7 +24,9 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -56,11 +58,30 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
     @Resource
     private Environment env;
 
-    @Bean(name = "viewResolver")
-    public InternalResourceViewResolver getViewResolver() {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/WEB-INF/pages/");
-        viewResolver.setSuffix(".jsp");
+    @Bean
+    public ServletContextTemplateResolver templateResolver() {
+        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver();
+        templateResolver.setPrefix("/WEB-INF/html/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode("HTML5");
+
+        return templateResolver;
+    }
+
+    @Bean
+    public SpringTemplateEngine templateEngine() {
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver());
+
+        return templateEngine;
+    }
+
+    @Bean
+    @Description("Thymeleaf view resolver")
+    public ThymeleafViewResolver viewResolver() {
+        ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
+        viewResolver.setTemplateEngine(templateEngine());
+
         return viewResolver;
     }
 
