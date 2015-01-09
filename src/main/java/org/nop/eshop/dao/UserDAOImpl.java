@@ -37,4 +37,19 @@ public class UserDAOImpl implements UserDAO {
     public void createUser(User user) {
         getCurrentSession().save(user);
     }
+
+    @Override
+    public void save(User u) {
+        getCurrentSession().save(u);
+    }
+
+    @Override
+    public void update(User u) {
+        getCurrentSession().saveOrUpdate(u);
+    }
+
+    @Override
+    public User get(Long id) {
+        return (User) getCurrentSession().load(User.class, id);
+    }
 }

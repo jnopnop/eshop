@@ -128,6 +128,60 @@
     </div>
 </div>
 
+<sec:authorize access="isAuthenticated()">
+    <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="editUserModalLabel">Edit My Profile</h4>
+                </div>
+                <div class="modal-body">
+                    <form Class="form-horizontal" id="form-edit-user" method="put">
+                        <fieldset>
+                            <!-- Title -->
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="ufullname">Full Name</label>
+                                <div class="col-md-10">
+                                    <input id="ufullname" name="ufullname" class="form-control input-md">
+                                </div>
+                            </div>
+
+                            <!-- Image -->
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="uimage">Profile Picture</label>
+                                <div class="col-md-10">
+                                    <input id="uimage" name="uimage" class="form-control input-md" type="file">
+                                </div>
+                            </div>
+
+                            <!-- Contents -->
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="uemail">E-mail</label>
+                                <img id="uimage" class="img img-responsive col-md-2" src="">
+                                <div class="col-md-10">
+                                    <input type="email" name="uemail" id="uemail" class="form-control input-md" required="">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="upassword">Password</label>
+                                <div class="col-md-10">
+                                    <input id="upassword" name="upassword" type="password" class="form-control input-md" required="">
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="edit-user-btn" type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</sec:authorize>
+
 <div class="modal fade" id="deleteNewsModal" tabindex="-1" role="dialog" aria-labelledby="deleteNewsModal" aria-hidden="true">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">

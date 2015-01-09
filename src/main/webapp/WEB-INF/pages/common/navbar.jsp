@@ -15,6 +15,7 @@
             <%--<li><a href="/admin/users">Users [A]<span class="sub_icon glyphicon glyphicon-filter"></span></a></li>--%>
         </sec:authorize>
         <sec:authorize access="isAuthenticated()">
+            <li><a href="#" data-toggle="modal" data-target="#editUserModal" data-user-id="${si.id}">Profile<span class="sub_icon glyphicon glyphicon-edit"></span></a></li>
             <li><a href="/logout">Logout<span class="sub_icon glyphicon glyphicon-log-out"></span></a></li>
         </sec:authorize>
         <sec:authorize access="isAnonymous()">

@@ -20,6 +20,22 @@ jQuery(function ($) {
         });
     });
 
+    $('#editUserModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var ID = button.data('user-id');
+
+        $('#edit-user-btn').data('user-id', ID);
+        $('form#form-edit-user')[0].reset();
+        $.get('/users/me', function (data) {
+            var user = data.data;
+            debugger;
+            $('#ufullname').val(user.fullname);
+            $('#uemail').val(user.email);
+            $('#upassword').val(user.password);
+            $('#uimage')
+        });
+    });
+
     $('#addNewsModal').on('show.bs.modal', function (event) {
         $('form#form-add-news')[0].reset();
         CKEDITOR.replace('acontents');

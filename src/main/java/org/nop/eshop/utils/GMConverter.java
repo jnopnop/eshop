@@ -85,7 +85,7 @@ public class GMConverter {
         return cw;
     }
 
-    private static UserWeb toUserWeb(User user) {
+    public static UserWeb toUserWeb(User user) {
         UserWeb uw = new UserWeb();
         uw.setId(user.getId());
         uw.setEmail(user.getEmail());
@@ -94,6 +94,7 @@ public class GMConverter {
         for (Image i: user.getImages()) {
             if (i.getType().equalsIgnoreCase(ImageService.IMAGE_TYPE_PRIMARY)) {
                 uw.setImage(URLFor(i, ImageService.ENTITY_USER));
+                break;
             }
         }
         return uw;

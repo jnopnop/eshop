@@ -1,5 +1,7 @@
 package org.nop.eshop.model;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,7 +13,7 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     private String email;
 
@@ -26,7 +28,8 @@ public class User {
     })
     private List<Image> images = new ArrayList<>();
 
-    @ManyToMany(cascade=CascadeType.ALL)
+    @ManyToMany
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @JoinTable(name="users_roles",
         joinColumns = {@JoinColumn(name="users_id", referencedColumnName="id")},
         inverseJoinColumns = {@JoinColumn(name="roles_id", referencedColumnName="id")})
@@ -43,11 +46,11 @@ public class User {
         this.images = images;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -2,17 +2,17 @@ package org.nop.eshop.web.model;
 
 
 public class UserWeb {
-    private Integer id;
+    private Long id;
     private String email;
     private String password;
     private String fullname;
     private String image;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

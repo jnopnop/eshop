@@ -24,7 +24,7 @@
         </c:if>
         <form name="f" action="<c:url value="/login" />" method="POST">
             <fieldset>
-                <legend>Please Login</legend>
+                <legend>Sign in with existing account or <a href="/register">register</a></legend>
                 <label for="username">Username</label>
                     <input type="text" id="username" name="username"/>
                 <label for="password">Password</label>
