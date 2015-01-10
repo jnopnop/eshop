@@ -136,10 +136,17 @@
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                     <h4 class="modal-title" id="editUserModalLabel">Edit My Profile</h4>
                 </div>
-                <div class="modal-body">
-                    <form Class="form-horizontal" id="form-edit-user" method="put">
+                <div class="modal-body" id="edit-user-modal-body">
+                    <div class="existing-user-image" style="display: none;">
+                        <img src="" class="img img-responsive" id="uimage">
+                        <a href="#" id="uimage-del" class="delete-image" data-image-path=""><span class="glyphicon glyphicon-remove"></span></a>
+                    </div>
+                    <form style="display: none;" method="post" id="up-user-img" enctype="multipart/form-data">
+                        <input id="upload-main-image" name="files[]" class="file" type="file" data-upload-async="false" data-upload-url="/pic/primary/users/me">
+                    </form>
+                    <br/>
+                    <form class="form-horizontal" id="form-edit-user" method="put">
                         <fieldset>
-                            <!-- Title -->
                             <div class="form-group">
                                 <label class="col-md-2 control-label" for="ufullname">Full Name</label>
                                 <div class="col-md-10">
@@ -147,15 +154,6 @@
                                 </div>
                             </div>
 
-                            <!-- Image -->
-                            <div class="form-group">
-                                <label class="col-md-2 control-label" for="uimage">Profile Picture</label>
-                                <div class="col-md-10">
-                                    <input id="uimage" name="uimage" class="form-control input-md" type="file">
-                                </div>
-                            </div>
-
-                            <!-- Contents -->
                             <div class="form-group">
                                 <label class="col-md-2 control-label" for="uemail">E-mail</label>
                                 <img id="uimage" class="img img-responsive col-md-2" src="">

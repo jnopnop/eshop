@@ -57,6 +57,8 @@ public class ImageController {
         return new AjaxResult(true);
     }
 
+    //TODO: Authentication image controller
+
     @RequestMapping(value = "/pic/{etype}/{name}", method = RequestMethod.DELETE)
     @ResponseBody
     public AjaxResult deleteImage(@PathVariable("etype") String etype,

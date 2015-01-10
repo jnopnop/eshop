@@ -20,19 +20,34 @@ jQuery(function ($) {
         });
     });
 
+    function getImageUploadPluginDOM(url) {
+        return '<form style="display: none;" method="post" id="up-user-img" enctype="multipart/form-data">' +
+                '<input id="upload-main-image" name="files[]" type="file" class="file" data-upload-async="false" data-upload-url="' + url + '">' +
+                '</form>';
+    }
+
     $('#editUserModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var ID = button.data('user-id');
 
         $('#edit-user-btn').data('user-id', ID);
         $('form#form-edit-user')[0].reset();
+        $('.existing-user-image').hide();
+        $('#up-user-img').hide();
         $.get('/users/me', function (data) {
             var user = data.data;
-            debugger;
             $('#ufullname').val(user.fullname);
             $('#uemail').val(user.email);
             $('#upassword').val(user.password);
-            $('#uimage')
+            debugger;
+            if (user.image && user.image.split('/').length > 3) {
+                $('#uimage').attr('src', user.image);
+                $('#uimage-del').data('image-path', user.image);
+                $('.existing-user-image').show();
+            } else {
+                //$('#upload-main-image').fileinput({'uploadUrl': '/pic/primary/users/'+user.id});
+                $('#up-user-img').show();
+            }
         });
     });
 
@@ -58,7 +73,13 @@ jQuery(function ($) {
             type: 'DELETE',
             success: function(data) {
                 if (data.success) {
-                    location.reload();
+                    if (_this.data('image-path').indexOf("users") > -1) {
+                        $('.existing-user-image').hide();
+                        $('#up-user-img>input').data('upload-url', _this.data('image-path'));
+                        $('#up-user-img').show();
+                    } else {
+                        location.reload();
+                    }
                 }
             }
         });

@@ -93,7 +93,9 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     public void deleteImage(String etype, String name) throws IOException {
         Long id = Long.valueOf(name.replaceAll("\\D", ""));
-        imageDAO.delete(id);
+        try {
+            imageDAO.delete(id);
+        } catch (Exception e) { }
         delete(path(etype, id));
     }
 
