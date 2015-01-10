@@ -103,8 +103,7 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
     @Autowired
     @Bean(name = "transactionManager")
     public HibernateTransactionManager getTransactionManager(SessionFactory sessionFactory) {
-        HibernateTransactionManager transactionManager = new HibernateTransactionManager(sessionFactory);
-        return transactionManager;
+        return new HibernateTransactionManager(sessionFactory);
     }
 
     @Override
@@ -124,8 +123,7 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper;
+        return new ObjectMapper();
     }
 
     @Override
