@@ -14,11 +14,11 @@ public interface UserService {
 
     List<User> getAll();
 
-    void updateUserImage(List<MultipartFile> images, Long id, String ptype) throws IOException;
+    void updateUserImage(List<MultipartFile> images, Authentication authentication, String ptype) throws IOException;
 
     void createUser(String fullname, String email, String password);
 
     UserWeb getUserInfo(Authentication authentication);
 
-    void updateUser(UserWeb userInfo);
+    void updateUser(Authentication authentication, UserWeb userInfo);
 }

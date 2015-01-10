@@ -20,17 +20,7 @@ jQuery(function ($) {
         });
     });
 
-    function getImageUploadPluginDOM(url) {
-        return '<form style="display: none;" method="post" id="up-user-img" enctype="multipart/form-data">' +
-                '<input id="upload-main-image" name="files[]" type="file" class="file" data-upload-async="false" data-upload-url="' + url + '">' +
-                '</form>';
-    }
-
     $('#editUserModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var ID = button.data('user-id');
-
-        $('#edit-user-btn').data('user-id', ID);
         $('form#form-edit-user')[0].reset();
         $('.existing-user-image').hide();
         $('#up-user-img').hide();
@@ -39,13 +29,11 @@ jQuery(function ($) {
             $('#ufullname').val(user.fullname);
             $('#uemail').val(user.email);
             $('#upassword').val(user.password);
-            debugger;
             if (user.image && user.image.split('/').length > 3) {
                 $('#uimage').attr('src', user.image);
                 $('#uimage-del').data('image-path', user.image);
                 $('.existing-user-image').show();
             } else {
-                //$('#upload-main-image').fileinput({'uploadUrl': '/pic/primary/users/'+user.id});
                 $('#up-user-img').show();
             }
         });
@@ -113,6 +101,32 @@ jQuery(function ($) {
             error: function() {
                 $.jGrowl('An error occurred while editing news...');
                 $('#editNewsModal').modal('hide');
+            }
+        });
+    });
+
+    $('#edit-user-btn').click(function(){
+        var user = {
+            "fullname": $('#ufullname').val(),
+            "email": $('#uemail').val(),
+            "password": $('#upassword').val()
+        };
+        $.ajax({
+            type: "PUT",
+            url: "/users/me",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(user),
+            success: function(result) {
+                if (!result.success) {
+                    $.jGrowl('An error occurred while editing profile...');
+                }
+
+                $('#editUserModal').modal('hide');
+            },
+            error: function() {
+                $.jGrowl('An error occurred while editing news...');
+                $('#editUserModal').modal('hide');
             }
         });
     });

@@ -38,10 +38,3 @@
     filter: gray;
     filter: grayscale(1);
 }
-
-.delete-image {
-    color: #ff0000;
-    position: absolute;
-    top: 3px;
-    left: 5px;
-}

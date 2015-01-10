@@ -13,13 +13,17 @@
     <link href="/css/jgrowl/jgrowl.min.css" rel="stylesheet">
     <link href="/css/datepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="/css/news.css" rel="stylesheet">
-    <sec:authorize access="hasRole('ROLE_ADMIN')">
+    <sec:authorize access="hasRole('ROLE_USER')">
         <link rel="stylesheet" href="/css/fileinput/fileinput.css">
+    </sec:authorize>
+    <sec:authorize access="hasRole('ROLE_ADMIN')">
         <link rel="stylesheet" href="/css/admin.css">
-        <script src="/js/fileinput/fileinput.min.js"></script>
     </sec:authorize>
 
     <script src="/js/chosen/chosen.jquery.min.js"></script>
+    <sec:authorize access="hasRole('ROLE_USER')">
+        <script src="/js/fileinput/fileinput.min.js"></script>
+    </sec:authorize>
     <script src="/js/datepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="/ckeditor/ckeditor.js"></script>
     <script src="/js/admin_news.js"></script>
@@ -137,14 +141,14 @@
                     <h4 class="modal-title" id="editUserModalLabel">Edit My Profile</h4>
                 </div>
                 <div class="modal-body" id="edit-user-modal-body">
-                    <div class="existing-user-image" style="display: none;">
+                    <div class="existing-user-image" style="display: none; float: left;position: relative;">
                         <img src="" class="img img-responsive" id="uimage">
                         <a href="#" id="uimage-del" class="delete-image" data-image-path=""><span class="glyphicon glyphicon-remove"></span></a>
                     </div>
                     <form style="display: none;" method="post" id="up-user-img" enctype="multipart/form-data">
-                        <input id="upload-main-image" name="files[]" class="file" type="file" data-upload-async="false" data-upload-url="/pic/primary/users/me">
+                        <input name="files[]" class="file" type="file" multiple=false  data-upload-async="false" data-upload-url="/pic/primary/users/0">
+                        <br/>
                     </form>
-                    <br/>
                     <form class="form-horizontal" id="form-edit-user" method="put">
                         <fieldset>
                             <div class="form-group">

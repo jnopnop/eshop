@@ -43,11 +43,10 @@ public class UserController {
         return new AjaxResult(userService.getUserInfo(getAuthentication()), true);
     }
 
-    @RequestMapping(value = "/users/${id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/users/me", method = RequestMethod.PUT)
     @ResponseBody
-    public AjaxResult updateUserInfo(@PathVariable(value = "id") Long id, @RequestBody UserWeb userInfo) {
-        userInfo.setId(id);
-        userService.updateUser(userInfo);
+    public AjaxResult updateUserInfo(@RequestBody UserWeb userInfo) {
+        userService.updateUser(getAuthentication(), userInfo);
         return new AjaxResult(true);
     }
 
