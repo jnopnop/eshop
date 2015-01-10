@@ -7,17 +7,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin [Persons]</title>
+    <title>Users</title>
 
     <link href="/css/chosen/chosen.min.css" rel="stylesheet">
     <link href="/css/jgrowl/jgrowl.min.css" rel="stylesheet">
     <link href="/css/datepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="/css/admin.css" rel="stylesheet">
+    <link href="/css/users.css">
 
     <script src="/js/chosen/chosen.jquery.min.js"></script>
     <script src="/js/datepicker/bootstrap-datetimepicker.min.js"></script>
-    <script src="/ckeditor/ckeditor.js"></script>
-    <script src="/js/admin_persons.js"></script>
+    <script src="/js/users.js"></script>
 </head>
 <body>
 <%@ include file="common/navbar.jsp" %>
@@ -48,6 +48,11 @@
                         </div>
                     </div>
                 </div>
+                <sec:authorize access="hasRole('ROLE_ADMIN')">
+                    <div class="row">
+                        <a class="btn btn-info" href="#" data-toggle="modal" data-target="#addPersonModal">Add Person</a>
+                    </div>
+                </sec:authorize>
                 <div class="row">
                     <ul class="pager">
                         <c:set var="hereClass" value="${persons.currPage <= 1 ? 'disabled':''}"></c:set>
@@ -61,10 +66,10 @@
                     </ul>
                 </div>
                 <div class="list-group">
-                    <!-- CKEditor -->
-                    <div class="row">
-                        <a href="#" data-toggle="modal" data-target="#ckeditorModal">ckeditor</a>
-                    </div>
+                    <%--<!-- CKEditor -->--%>
+                    <%--<div class="row">--%>
+                    <%--<a href="#" data-toggle="modal" data-target="#ckeditorModal">ckeditor</a>--%>
+                    <%--</div>--%>
                     <c:choose>
                         <c:when test="${empty persons.results}">
                             <h2>Nothing was found. You're trying to do something odd, aren't you?!</h2>
@@ -75,8 +80,8 @@
                                     <div class="media col-md-2">
                                         <figure class="pull-left">
                                             <c:choose>
-                                                <c:when test="${not empty si.photoURL}">
-                                                    <img style="width:150px;" class="img-responsive img-thumbnail" src="/pic/persons/${si.photoURL}">
+                                                <c:when test="${not empty si.mainImage}">
+                                                    <img style="width:150px;" class="img-responsive img-thumbnail" src="${si.mainImage}">
                                                 </c:when>
                                                 <c:otherwise>
                                                     <span>No photo</span>
@@ -85,10 +90,11 @@
                                         </figure>
                                     </div>
                                     <div class="col-md-10">
-                                        <h4>ID: ${si.id}</h4>
-                                        <a href="/person/${si.id}" target="_blank"><h4 class="list-group-item-heading admin-person-title">${si.fullname} (<fmt:formatDate value="${si.birthdate}" type="DATE" pattern="yyyy"></fmt:formatDate>)</h4></a>
-                                        <span class="admin-delete"><a href="#" data-toggle="modal" data-target="#deletePersonModal" data-person-id="${si.id}">delete</a></span>
-                                        <span class="admin-edit"><a href="#" data-toggle="modal" data-target="#editPersonModal" data-person-id="${si.id}">edit</a></span>
+                                        <a href="/person/${si.id}" target="_blank"><span class="list-group-item-heading admin-person-title">${si.fullname} (<fmt:formatDate value="${si.birthdate}" type="DATE" pattern="yyyy"></fmt:formatDate>)</span></a>
+                                        <sec:authorize access="hasRole('ROLE_ADMIN')">
+                                            <span class="admin-delete"><a href="#" data-toggle="modal" data-target="#deletePersonModal" data-person-id="${si.id}"><span class="glyphicon glyphicon-remove"></span></a></span>
+                                            <span class="admin-edit"><a href="#" data-toggle="modal" data-target="#editPersonModal" data-person-id="${si.id}"><span class="glyphicon glyphicon-edit"></span></a></span>
+                                        </sec:authorize>
                                     </div>
                                 </div>
                             </c:forEach>
@@ -193,22 +199,3 @@
 </div>
 </body>
 </html>
-<%--<c:url value="/logout" var="logoutUrl" />--%>
-<%--<form action="${logoutUrl}" method="post" id="logoutForm">--%>
-<%--<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />--%>
-<%--</form>--%>
-<%--<script>--%>
-<%--function formSubmit() {--%>
-<%--document.getElementById("logoutForm").submit();--%>
-<%--}--%>
-<%--</script>--%>
-
-<%--<c:if test="${pageContext.request.userPrincipal.name != null}">--%>
-<%--<h2>--%>
-<%--Welcome : ${pageContext.request.userPrincipal.name} | <a--%>
-<%--href="javascript:formSubmit()"> Logout</a>--%>
-<%--</h2>--%>
-<%--</c:if>--%>
-
-<%--</body>--%>
-<%--</html>--%>

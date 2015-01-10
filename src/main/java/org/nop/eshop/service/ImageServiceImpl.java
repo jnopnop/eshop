@@ -43,6 +43,25 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    public byte[] getImage(String path) throws FileNotFoundException {
+        assert !StringUtils.isEmpty(path);
+        InputStream is;
+        try {
+            is = new FileInputStream(new File(IMG_ROOT + path.replaceFirst("/", "")));
+        } catch (Exception e) {
+            is = new FileInputStream(new File(IMG_ROOT + ENTITY_USER + "/" + NOT_FOUND));
+        }
+
+        try {
+            return IOUtils.toByteArray(is);
+        } catch (IOException e) {
+            return null;
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    @Override
     public synchronized void update(String entity, Long id, byte[] file) throws IOException {
         delete(entity, id);
         save(file, path(entity, id));

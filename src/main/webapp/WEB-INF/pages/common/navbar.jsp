@@ -1,7 +1,14 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <div id="sidebar-wrapper">
     <ul id="sidebar_menu" class="sidebar-nav">
-        <li class="sidebar-brand"><a id="menu-toggle" href="/"><i>eshop</i><span id="main_icon" class="glyphicon glyphicon-align-justify"></span></a></li>
+        <li class="sidebar-brand"><a id="menu-toggle" href="/"><i>eshop</i>
+            <sec:authorize access="isAnonymous()">
+                <span id="main_icon" class="glyphicon glyphicon-align-justify"></span>
+            </sec:authorize>
+            <sec:authorize access="isAuthenticated()">
+                <img src="/pic/users/me" id="main_icon" >
+            </sec:authorize>
+        </a></li>
     </ul>
     <ul class="sidebar-nav" id="sidebar">
         <li><a href="/news">Home<span class="sub_icon glyphicon glyphicon-home"></span></a></li>

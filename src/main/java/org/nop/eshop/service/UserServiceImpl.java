@@ -6,6 +6,9 @@ import org.nop.eshop.model.Image;
 import org.nop.eshop.model.Role;
 import org.nop.eshop.model.User;
 import org.nop.eshop.utils.GMConverter;
+import org.nop.eshop.web.model.PageInfo;
+import org.nop.eshop.web.model.PagerResult;
+import org.nop.eshop.web.model.PagingResult;
 import org.nop.eshop.web.model.UserWeb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,9 +25,6 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-    public static final String ROLE_ADMIN = "ROLE_ADMIN";
-    public static final String ROLE_USER = "ROLE_USER";
 
     @Autowired
     private UserDAO userDAO;
@@ -100,6 +100,58 @@ public class UserServiceImpl implements UserService {
         SecurityContextHolder.getContext().setAuthentication(result);
     }
 
+    @Override
+    @Transactional
+    public PagerResult<UserWeb> search(String q, Integer p) {
+        p = currentPage(p);
+        PagerResult<UserWeb> pager = new PagerResult<>();
+        pager.setCurrPage(p);
+        pager.setResults(GMConverter.toWebUsers(userDAO.search(q, (p - 1) * PagerResult.PAGE_SIZE, PagerResult.PAGE_SIZE, pager)));
+        pager.setLastPage(lastPage(userDAO.count()));
+        return pager;
+    }
+
+    @Override
+    @Transactional
+    public PagingResult<UserWeb> search(PageInfo pageInfo) {
+        PagingResult<UserWeb> pagingResult = new PagingResult<>(pageInfo);
+        return userDAO.search(pagingResult);
+    }
+
+    @Override
+    @Transactional
+    public void setAdmin(Long id, boolean admin) {
+        User user = userDAO.get(id);
+        Assert.notNull(user, "This user does not exist!");
+
+        Role role_admin = getRole(ROLE_ADMIN);
+        if (admin && !user.getRoles().contains(role_admin)) {
+            user.getRoles().add(role_admin);
+            userDAO.update(user);
+        } else if (!admin && user.getRoles().contains(role_admin)) {
+            user.getRoles().remove(role_admin);
+            userDAO.update(user);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        userDAO.delete(id);
+    }
+
+
+//    @Transactional
+//    public PagerResult<UserWeb> search(String q, Integer p, String sortingField) {
+//        p = currentPage(p);
+//        PagerResult<UserWeb> pager = new PagerResult<>();
+//        pager.setCurrPage(p);
+//        pager.setResults(GMConverter.toWebUsers(userDAO.search(q, (p - 1) * PagerResult.PAGE_SIZE, PagerResult.PAGE_SIZE, pager)));
+//        //SortType
+//        pager.setLastPage(lastPage(pager.getMaxResults()));
+//        return pager;
+//    }
+
     private Role getRole(String role) {
         return roleDAO.getRole(role);
     }
@@ -112,5 +164,13 @@ public class UserServiceImpl implements UserService {
             //User either isn't logged in or doesn't exist in DB
             return null;
         }
+    }
+
+    private Integer currentPage(Integer p) {
+        return  p != null ? Math.max(1, p) : 1;
+    }
+
+    private Integer lastPage(Long total) {
+        return (int)Math.ceil(total / Float.valueOf(PagerResult.PAGE_SIZE));
     }
 }

@@ -216,14 +216,6 @@
                             </div>
                         </div>
 
-                        <!-- Image -->
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="mimage">Image</label>
-                            <div class="col-md-10">
-                                <input id="mimage" name="mimage" class="form-control input-md" type="file">
-                            </div>
-                        </div>
-
                         <!-- Contents -->
                         <div class="form-group">
                             <label class="col-md-2 control-label" for="mcontents">Contents</label>

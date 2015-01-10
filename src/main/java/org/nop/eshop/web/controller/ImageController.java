@@ -4,6 +4,7 @@ import org.nop.eshop.service.ImageService;
 import org.nop.eshop.service.MovieService;
 import org.nop.eshop.service.UserService;
 import org.nop.eshop.web.model.AjaxResult;
+import org.nop.eshop.web.model.UserWeb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -34,6 +35,14 @@ public class ImageController {
         return imageService.getImage(etype, name);
     }
 
+    @Secured(UserService.ROLE_USER)
+    @RequestMapping(value = "/pic/users/me", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+    @ResponseBody
+    public byte[] getMyImage() throws IOException {
+        UserWeb currentUser = userService.getUserInfo(getAuthentication());
+        return imageService.getImage(currentUser.getImage());
+    }
+
     @Secured("ROLE_USER")
     @RequestMapping(value = "/pic/{ptype}/{etype}/{id}", method = RequestMethod.POST)
     @ResponseBody
@@ -60,6 +69,8 @@ public class ImageController {
 
         return new AjaxResult(true);
     }
+
+
 
     @RequestMapping(value = "/pic/{etype}/{name}", method = RequestMethod.DELETE)
     @ResponseBody

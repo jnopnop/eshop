@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin [Persons]</title>
+    <title>Persons</title>
 
     <link href="/css/chosen/chosen.min.css" rel="stylesheet">
     <link href="/css/jgrowl/jgrowl.min.css" rel="stylesheet">

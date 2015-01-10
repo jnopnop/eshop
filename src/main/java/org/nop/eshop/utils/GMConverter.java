@@ -5,6 +5,7 @@ import org.jboss.logging.Logger;
 import org.nop.eshop.model.*;
 import org.nop.eshop.service.ImageService;
 import org.nop.eshop.service.MovieService;
+import org.nop.eshop.service.UserService;
 import org.nop.eshop.web.model.*;
 
 import java.util.*;
@@ -85,6 +86,15 @@ public class GMConverter {
         return cw;
     }
 
+    public static List<UserWeb> toWebUsers(Collection<User> u) {
+        List<UserWeb> users = new ArrayList<>();
+        for (User uu: u) {
+            users.add(toUserWeb(uu));
+        }
+
+        return users;
+    }
+
     public static UserWeb toUserWeb(User user) {
         UserWeb uw = new UserWeb();
         uw.setId(user.getId());
@@ -94,6 +104,12 @@ public class GMConverter {
         for (Image i: user.getImages()) {
             if (i.getType().equalsIgnoreCase(ImageService.IMAGE_TYPE_PRIMARY)) {
                 uw.setImage(URLFor(i, ImageService.ENTITY_USER));
+                break;
+            }
+        }
+        for (Role r: user.getRoles()) {
+            if (UserService.ROLE_ADMIN.equalsIgnoreCase(r.getRole())) {
+                uw.setAdmin(true);
                 break;
             }
         }

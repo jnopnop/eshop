@@ -7,6 +7,7 @@ public class UserWeb {
     private String password;
     private String fullname;
     private String image;
+    private boolean admin = false;
 
     public Long getId() {
         return id;
@@ -46,5 +47,13 @@ public class UserWeb {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }

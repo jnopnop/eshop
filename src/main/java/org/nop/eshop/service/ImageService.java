@@ -20,6 +20,7 @@ public interface ImageService {
     public static final String IMAGE_TYPE_CAROUSEL = "carousel";
 
     byte[] getImage(String entity, String filename) throws FileNotFoundException;
+    byte[] getImage(String path) throws FileNotFoundException;
     void update(String type, Long id, byte[] file) throws IOException;
     void delete(String type, Long id) throws IOException;
     Image upload(byte[] file, String forEntity, String ofType) throws IOException;
