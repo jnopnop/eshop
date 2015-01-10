@@ -1,5 +1,8 @@
 package org.nop.eshop.model;
 
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.Field;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,9 +14,11 @@ public class Role {
     @GeneratedValue
     private Integer id;
 
+    @Field
     private String role;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @ContainedIn
     private Set<User> userRoles = new HashSet<>();
 
     public Role() {

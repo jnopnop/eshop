@@ -1,6 +1,9 @@
 package org.nop.eshop.model;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,15 +13,19 @@ import java.util.Set;
 
 @Entity
 @Table(name="users")
+@Indexed
 public class User {
+
     @Id
     @GeneratedValue
     private Long id;
 
+    @Field
     private String email;
 
     private String password;
 
+    @Field
     private String fullname;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -33,6 +40,7 @@ public class User {
     @JoinTable(name="users_roles",
         joinColumns = {@JoinColumn(name="users_id", referencedColumnName="id")},
         inverseJoinColumns = {@JoinColumn(name="roles_id", referencedColumnName="id")})
+    @IndexedEmbedded(depth = 1)
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
