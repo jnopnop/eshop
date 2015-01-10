@@ -52,9 +52,3 @@ public class Role {
         this.userRoles = userRoles;
     }
 }
-
-/*
-@JoinTable(name="users_roles",
-            joinColumns = {@JoinColumn(name="roles_id", referencedColumnName="id")},
-            inverseJoinColumns = {@JoinColumn(name="users_id", referencedColumnName="id")})
- */
