@@ -1,11 +1,14 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <div id="sidebar-wrapper">
     <ul id="sidebar_menu" class="sidebar-nav">
-        <li class="sidebar-brand"><a id="menu-toggle" href="/"><i>eshop</i>
+        <li class="sidebar-brand"><a id="menu-toggle" href="/">
+            <sec:authentication var="principal" property="principal" />
             <sec:authorize access="isAnonymous()">
+                <i>eshop</i>
                 <span id="main_icon" class="glyphicon glyphicon-align-justify"></span>
             </sec:authorize>
             <sec:authorize access="isAuthenticated()">
+                <i>${principal.username}</i>
                 <img src="/pic/users/me" id="main_icon" >
             </sec:authorize>
         </a></li>
@@ -17,9 +20,6 @@
         <li><a href="/search">Search<span class="sub_icon glyphicon glyphicon-filter"></span></a></li>
         <sec:authorize access="hasRole('ROLE_ADMIN')">
             <li><a href="/users">Users<span class="sub_icon glyphicon glyphicon-user"></span></a></li>
-            <%--<li><a href="/admin/movies">Movies [A]<span class="sub_icon glyphicon glyphicon-filter"></span></a></li>--%>
-            <%--<li><a href="/admin/persons">Persons [A]<span class="sub_icon glyphicon glyphicon-filter"></span></a></li>--%>
-            <%--<li><a href="/admin/users">Users [A]<span class="sub_icon glyphicon glyphicon-filter"></span></a></li>--%>
         </sec:authorize>
         <sec:authorize access="isAuthenticated()">
             <li><a href="#" data-toggle="modal" data-target="#editUserModal" data-user-id="${si.id}">Profile<span class="sub_icon glyphicon glyphicon-edit"></span></a></li>

@@ -47,7 +47,7 @@ public class ImageServiceImpl implements ImageService {
         assert !StringUtils.isEmpty(path);
         InputStream is;
         try {
-            is = new FileInputStream(new File(IMG_ROOT + path.replaceFirst("/", "")));
+            is = new FileInputStream(new File(IMG_ROOT + path.replaceFirst("/pic/", "")));
         } catch (Exception e) {
             is = new FileInputStream(new File(IMG_ROOT + ENTITY_USER + "/" + NOT_FOUND));
         }
