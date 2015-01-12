@@ -9,7 +9,7 @@ var fillMovieData = function (formSelector, id) {
         $('[data-for=description]').val(data.description);
         $('[data-for=rating]', form).val(data.rating);
         $('[data-for=duration]', form).val(data.duration);
-        $('[data-for=releaseDate]', form).val(data.releaseDate);
+        $('[data-for=releaseDate]', form).data("DateTimePicker").setDate(moment(data.releaseDate).format('MM/DD/YYYY'));
         $('[data-for=imdbId]', form).val(data.imdbId);
         $('[data-for=ageCategory]', form).val(data.ageCategory);
         $('[data-for=ageCategory]', form).trigger("chosen:updated");
@@ -100,6 +100,8 @@ jQuery(function ($) {
     //$('.chzn').chosen({allow_single_deselect: true});
     $('#search-form').removeClass('in');
 
+    $('[data-for=releaseDate]').datetimepicker({pickTime: false});
+
     $('#editMovieModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var ID = button.data('movie-id');
@@ -150,7 +152,7 @@ jQuery(function ($) {
             "title": $('#atitle').val(),
             "description": $('#adescription').val(),
             "duration": $('#aduration').val(),
-            "releaseDate": $('#areleaseDate').val(),
+            "releaseDate": moment($('#areleaseDate').val()),
             "rating": $('#arating').val(),
             "imdbId": $('#aimdbId').val(),
             "ageCategory": $('select#aageCategory').val(),
@@ -208,7 +210,7 @@ jQuery(function ($) {
             "title": $('#mtitle').val(),
             "description": $('#mdescription').val(),
             "duration": $('#mduration').val(),
-            "releaseDate": $('#mreleaseDate').val(),
+            "releaseDate": moment($('#mreleaseDate').val()),
             "rating": $('#mrating').val(),
             "imdbId": $('#mimdbId').val(),
             "ageCategory": $('select#mageCategory').val(),
