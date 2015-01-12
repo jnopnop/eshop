@@ -37,7 +37,7 @@
                         <c:set var="searchBoxClass" value="${query.length() > 0 ? '' : 'collapse'}"></c:set>
                         <div id="search-form" class="panel-collapse ${searchBoxClass}">
                             <div class="panel-body">
-                                <form role="search" method="get" action="/admin/persons">
+                                <form role="search" method="get" action="/persons">
                                     <div class="input-group">
                                         <input type="text" class="form-control" placeholder="Search" name="q" id="q" <c:if test="${not empty query}"> value="${query}"</c:if>>
                                         <div class="input-group-btn">

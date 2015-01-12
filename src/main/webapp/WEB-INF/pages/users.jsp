@@ -71,7 +71,7 @@
                                         <figure class="pull-left">
                                             <c:choose>
                                                 <c:when test="${not empty si.image}">
-                                                    <img class="img-responsive img-thumbnail" src="${si.image}">
+                                                    <img class="img-responsive img-thumbnail" src="${si.image}" style="max-width: 50px;">
                                                 </c:when>
                                                 <c:otherwise>
                                                     <img class="img-responsive img-thumbnail" src="/pic/users/notfound">
