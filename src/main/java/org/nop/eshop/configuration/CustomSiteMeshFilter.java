@@ -8,6 +8,5 @@ public class CustomSiteMeshFilter extends ConfigurableSiteMeshFilter {
     @Override
     protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
         builder.addDecoratorPath("/*", "/decorators/base.html");
-                //.addDecoratorPath("/admin*", "/decorators/base.html");
     }
 }

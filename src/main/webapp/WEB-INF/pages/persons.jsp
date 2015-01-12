@@ -154,7 +154,7 @@
                 <h4 class="modal-title" id="editPersonModalLabel">Edit Person</h4>
             </div>
             <div class="modal-body">
-                <form Class="form-horizontal" id="form-edit-person" method="put">
+                <form class="form-horizontal" id="form-edit-person" method="put">
                     <fieldset>
                         <!-- Fullname -->
                         <div class="form-group">

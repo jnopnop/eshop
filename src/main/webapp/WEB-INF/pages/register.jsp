@@ -1,19 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Register</title>
-
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+    <title>Sign in</title>
 </head>
-
 <body>
-    <div class="container">
+<!-- Page content -->
+<div id="page-content-wrapper">
+    <!-- Keep all page content within the page-content inset div! -->
+    <div class="page-content inset">
         <c:if test="${not empty param.error}">
             <div class="error">${param.error}</div>
         </c:if>
@@ -32,5 +26,7 @@
             </fieldset>
         </form>
     </div>
+</div>
+</div>
 </body>
 </html>
