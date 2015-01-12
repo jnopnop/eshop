@@ -20,25 +20,6 @@ jQuery(function ($) {
         });
     });
 
-    $('#editUserModal').on('show.bs.modal', function (event) {
-        $('form#form-edit-user')[0].reset();
-        $('.existing-user-image').hide();
-        $('#up-user-img').hide();
-        $.get('/users/me', function (data) {
-            var user = data.data;
-            $('#ufullname').val(user.fullname);
-            $('#uemail').val(user.email);
-            $('#upassword').val(user.password);
-            if (user.image && user.image.split('/').length > 3) {
-                $('#uimage').attr('src', user.image);
-                $('#uimage-del').data('image-path', user.image);
-                $('.existing-user-image').show();
-            } else {
-                $('#up-user-img').show();
-            }
-        });
-    });
-
     $('#addNewsModal').on('show.bs.modal', function (event) {
         $('form#form-add-news')[0].reset();
         CKEDITOR.replace('acontents');
@@ -101,32 +82,6 @@ jQuery(function ($) {
             error: function() {
                 $.jGrowl('An error occurred while editing news...');
                 $('#editNewsModal').modal('hide');
-            }
-        });
-    });
-
-    $('#edit-user-btn').click(function(){
-        var user = {
-            "fullname": $('#ufullname').val(),
-            "email": $('#uemail').val(),
-            "password": $('#upassword').val()
-        };
-        $.ajax({
-            type: "PUT",
-            url: "/users/me",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            data: JSON.stringify(user),
-            success: function(result) {
-                if (!result.success) {
-                    $.jGrowl('An error occurred while editing profile...');
-                }
-
-                $('#editUserModal').modal('hide');
-            },
-            error: function() {
-                $.jGrowl('An error occurred while editing news...');
-                $('#editUserModal').modal('hide');
             }
         });
     });

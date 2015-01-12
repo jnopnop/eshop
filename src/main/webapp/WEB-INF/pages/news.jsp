@@ -9,24 +9,12 @@
 <head>
     <title>Movie News</title>
 
-    <link href="/css/chosen/chosen.min.css" rel="stylesheet">
-    <link href="/css/jgrowl/jgrowl.min.css" rel="stylesheet">
-    <link href="/css/datepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
+
     <link href="/css/news.css" rel="stylesheet">
-    <sec:authorize access="hasRole('ROLE_USER')">
-        <link rel="stylesheet" href="/css/fileinput/fileinput.css">
-    </sec:authorize>
     <sec:authorize access="hasRole('ROLE_ADMIN')">
         <link rel="stylesheet" href="/css/admin.css">
     </sec:authorize>
-
-    <script src="/js/chosen/chosen.jquery.min.js"></script>
-    <sec:authorize access="hasRole('ROLE_USER')">
-        <script src="/js/fileinput/fileinput.min.js"></script>
-    </sec:authorize>
-    <script src="/js/datepicker/bootstrap-datetimepicker.min.js"></script>
-    <script src="/ckeditor/ckeditor.js"></script>
-    <script src="/js/admin_news.js"></script>
+    <script src="/js/news.js"></script>
 </head>
 <body>
 <%@ include file="common/navbar.jsp" %>
@@ -35,29 +23,6 @@
     <div class="page-content inset">
         <div class="row">
             <div class="well">
-                <!-- News fulltext search currently is not available -->
-                <%--<div class="row accordion">--%>
-                    <%--<div class="panel panel-default">--%>
-                        <%--<div class="panel-heading">--%>
-                            <%--<h4 class="panel-title">--%>
-                                <%--<a data-toggle="collapse" data-parent="#accordion" href="#search-form">Search</a>--%>
-                            <%--</h4>--%>
-                        <%--</div>--%>
-                        <%--<c:set var="searchBoxClass" value="${query.length() > 0 ? '' : 'collapse'}"></c:set>--%>
-                        <%--<div id="search-form" class="panel-collapse ${searchBoxClass}">--%>
-                            <%--<div class="panel-body">--%>
-                                <%--<form role="search" method="get" action="/admin/news">--%>
-                                    <%--<div class="input-group">--%>
-                                        <%--<input type="text" class="form-control" placeholder="Search" name="q" id="q" <c:if test="${not empty query}"> value="${query}"</c:if>>--%>
-                                        <%--<div class="input-group-btn">--%>
-                                            <%--<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>--%>
-                                        <%--</div>--%>
-                                    <%--</div>--%>
-                                <%--</form>--%>
-                            <%--</div>--%>
-                        <%--</div>--%>
-                    <%--</div>--%>
-                <%--</div>--%>
                 <sec:authorize access="hasRole('ROLE_ADMIN')">
                     <div class="row">
                         <a class="btn btn-info" href="#" data-toggle="modal" data-target="#addNewsModal">Add News</a>
@@ -131,58 +96,6 @@
         </div>
     </div>
 </div>
-
-<sec:authorize access="isAuthenticated()">
-    <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="editUserModalLabel">Edit My Profile</h4>
-                </div>
-                <div class="modal-body" id="edit-user-modal-body">
-                    <div class="existing-user-image" style="display: none; float: left;position: relative;">
-                        <img src="" class="img img-responsive" id="uimage">
-                        <a href="#" id="uimage-del" class="delete-image" data-image-path=""><span class="glyphicon glyphicon-remove"></span></a>
-                    </div>
-                    <form style="display: none;" method="post" id="up-user-img" enctype="multipart/form-data">
-                        <input name="files[]" class="file" type="file" multiple=false  data-upload-async="false" data-upload-url="/pic/primary/users/0">
-                        <br/>
-                    </form>
-                    <form class="form-horizontal" id="form-edit-user" method="put">
-                        <fieldset>
-                            <div class="form-group">
-                                <label class="col-md-2 control-label" for="ufullname">Full Name</label>
-                                <div class="col-md-10">
-                                    <input id="ufullname" name="ufullname" class="form-control input-md">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-2 control-label" for="uemail">E-mail</label>
-                                <img id="uimage" class="img img-responsive col-md-2" src="">
-                                <div class="col-md-10">
-                                    <input type="email" name="uemail" id="uemail" class="form-control input-md" required="">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-2 control-label" for="upassword">Password</label>
-                                <div class="col-md-10">
-                                    <input id="upassword" name="upassword" type="password" class="form-control input-md" required="">
-                                </div>
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="edit-user-btn" type="button" class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</sec:authorize>
 
 <div class="modal fade" id="deleteNewsModal" tabindex="-1" role="dialog" aria-labelledby="deleteNewsModal" aria-hidden="true">
     <div class="modal-dialog modal-sm">
@@ -272,7 +185,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button id="add-news-btn" type="button" class="btn btn-primary">Edit</button>
+                <button id="add-news-btn" type="button" class="btn btn-primary">Add</button>
             </div>
         </div>
     </div>
