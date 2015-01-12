@@ -2,7 +2,7 @@ jQuery(function ($) {
 
     $('.chzn').chosen({allow_single_deselect: true});
 
-    $('#mbirthdate').datetimepicker({pickTime: false});
+    $('#mbirthdate,#abirthdate').datetimepicker({pickTime: false});
 
     $('#editPersonModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
@@ -10,7 +10,7 @@ jQuery(function ($) {
 
         $('#edit-person-btn').data('person-id', ID);
         $('form#form-edit-person')[0].reset();
-        $.get('/admin/persons/'+ID, function (data) {
+        $.get('/persons/'+ID, function (data) {
             var person = data.data;
             $('#mfullname').val(person.fullname);
             $('#mbirthdate').data("DateTimePicker").setDate(moment(person.birthdate).format('MM/DD/YYYY'));
@@ -25,13 +25,9 @@ jQuery(function ($) {
         $('#delete-person-btn').data('person-id', ID);
     });
 
-    $('#ckeditorModal').on('show.bs.modal', function(event){
-        CKEDITOR.replace( 'editor1' );
-    });
-
-    $('#ckeditor-submit-btn').click(function(){
-        var data = CKEDITOR.instances.editor1.getData();
-        debugger;
+    $('#addPersonModal').on('show.bs.modal', function (event) {
+        $('#abirthdate').data("DateTimePicker").setDate(moment().format('MM/DD/YYYY'));
+        $('form#form-add-person')[0].reset();
     });
 
     $('#edit-person-btn').click(function() {
@@ -47,7 +43,7 @@ jQuery(function ($) {
         };
         $.ajax({
             type: "PUT",
-            url: "/admin/persons",
+            url: "/persons",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: JSON.stringify(newPerson),
@@ -71,7 +67,7 @@ jQuery(function ($) {
     $('#delete-person-btn').click(function() {
         var delID = $(this).data('person-id');
         $.ajax({
-            url: '/admin/persons/'+delID,
+            url: '/persons/'+delID,
             type: 'DELETE',
             success: function(result) {
                 if (result.success) {
@@ -95,20 +91,26 @@ jQuery(function ($) {
         return new Date(dateParts[2], dateParts[1], dateParts[0]).getTime();
     };
 
-    $('#addperson').click(function () {
+    $('#add-person-btn').click(function () {
         var newPerson = {
-            "id": personID,
-            "fullname": $('#mfullname').val(),
-            "birthdate": $('#mbirthdate').val(),
-            "photoURL": $('#mphotoURL').val(),
-            "imdbId": $('#mimdbId').val()
+            "fullname": $('#afullname').val(),
+            "birthdate": moment($('#abirthdate').val()),
+            "imdbId": $('#aimdbId').val()
         };
         $.ajax({
             type: "POST",
-            url: "/admin/person",
+            url: "/persons",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            data: JSON.stringify(newPerson)
+            data: JSON.stringify(newPerson),
+            success: function(result) {
+                if (result.success) {
+                    location.reload();
+                } else {
+                    $.jGrowl('An error occurred while deleting person...');
+                    $('#addPersonModal').modal('hide');
+                }
+            }
         });
     });
 });

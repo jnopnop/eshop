@@ -9,15 +9,9 @@
 <head>
     <title>Persons</title>
 
-    <link href="/css/chosen/chosen.min.css" rel="stylesheet">
-    <link href="/css/jgrowl/jgrowl.min.css" rel="stylesheet">
-    <link href="/css/datepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="/css/persons.css" rel="stylesheet">
     <link href="/css/admin.css" rel="stylesheet">
 
-    <script src="/js/chosen/chosen.jquery.min.js"></script>
-    <script src="/js/datepicker/bootstrap-datetimepicker.min.js"></script>
-    <script src="/ckeditor/ckeditor.js"></script>
     <script src="/js/admin_persons.js"></script>
 </head>
 <body>
@@ -67,10 +61,6 @@
                     </ul>
                 </div>
                 <div class="list-group">
-                    <%--<!-- CKEditor -->--%>
-                    <%--<div class="row">--%>
-                        <%--<a href="#" data-toggle="modal" data-target="#ckeditorModal">ckeditor</a>--%>
-                    <%--</div>--%>
                     <c:choose>
                         <c:when test="${empty persons.results}">
                             <h2>Nothing was found. You're trying to do something odd, aren't you?!</h2>
@@ -85,7 +75,7 @@
                                                     <img style="width:150px;" class="img-responsive img-thumbnail" src="${si.mainImage}">
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <span>No photo</span>
+                                                    <img style="width:150px;" class="img-responsive img-thumbnail" src="/pic/persons/notfound">
                                                 </c:otherwise>
                                             </c:choose>
                                         </figure>
@@ -102,31 +92,6 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="ckeditorModal" tabindex="-1" role="dialog" aria-labelledby="ckeditorModal" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-body">
-                <form Class="form-horizontal" id="ckeditor-form" method="put">
-                    <fieldset>
-                        <!-- Fullname -->
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <textarea name="editor1" id="editor1" rows="10" cols="80">
-                                    This is my textarea to be replaced with CKEditor.
-                                </textarea>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button id="ckeditor-submit-btn" type="button" class="btn btn-primary">Save</button>
             </div>
         </div>
     </div>
@@ -172,14 +137,6 @@
                             </div>
                         </div>
 
-                        <!-- Photo -->
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="mphotoURL">Photo</label>
-                            <div class="col-md-10">
-                                <input id="mphotoURL" name="mphotoURL" class="form-control input-md">
-                            </div>
-                        </div>
-
                         <!-- ImdbId -->
                         <div class="form-group">
                             <label class="col-md-2 control-label" for="mimdbId">IMDB ID</label>
@@ -194,6 +151,51 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <button id="edit-person-btn" type="button" class="btn btn-primary">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addPersonModal" tabindex="-1" role="dialog" aria-labelledby="addPersonModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="addPersonModalLabel">Add Person</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="form-add-person" method="put">
+                    <fieldset>
+                        <!-- Fullname -->
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="afullname">Fullname</label>
+                            <div class="col-md-10">
+                                <input id="afullname" name="afullname" placeholder="" class="form-control input-md">
+                            </div>
+                        </div>
+
+                        <!-- Birthdate -->
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="abirthdate">Birthdate</label>
+                            <div class="col-md-10">
+                                <input id="abirthdate" name="abirthdate" class="form-control input-md">
+                            </div>
+                        </div>
+
+                        <!-- ImdbId -->
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="aimdbId">IMDB ID</label>
+                            <div class="col-md-10">
+                                <input id="aimdbId" name="aimdbId" class="form-control input-md">
+                                <span class="help-block">optional</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="add-person-btn" type="button" class="btn btn-primary">Add</button>
             </div>
         </div>
     </div>
