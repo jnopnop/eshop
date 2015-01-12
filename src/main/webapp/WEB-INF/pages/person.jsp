@@ -43,7 +43,7 @@
                             </c:when>
                             <c:otherwise>
                                 <img class="img-responsive img-thumbnail" src="${person.mainImage}">
-                                <a href="#" class="delete-image" data-image-path="${person.mainImage}"><span class="sub_icon glyphicon glyphicon-remove"></span></a>
+                                <a href="#" class="delete-image admin-delete" data-image-path="${person.mainImage}"><span class="sub_icon glyphicon glyphicon-remove"></span></a>
                             </c:otherwise>
                         </c:choose>
                     </sec:authorize>
@@ -79,7 +79,7 @@
                     <%--</div>--%>
                 <%--</div>--%>
             <%--</c:if>--%>
-            <c:if test="${not empty person.carouselImages}">
+            <%--<c:if test="${not empty person.carouselImages}">--%>
                 <br>
                 <div class="row" style="display: block;">
                     <div class="col-md-12">
@@ -100,7 +100,7 @@
                         </div>
                     </div>
                 </div>
-            </c:if>
+            <%--</c:if>--%>
             <br>
             <span style="font-size: x-large;">Known for:</span>
             <hr style="margin-top: 0px;"/>

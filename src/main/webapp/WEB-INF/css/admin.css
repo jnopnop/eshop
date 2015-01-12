@@ -38,3 +38,9 @@
     filter: gray;
     filter: grayscale(1);
 }
+
+.delete-image {
+    position: absolute;
+    left: 25px;
+    top: 10px;
+}
