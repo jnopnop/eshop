@@ -8,7 +8,7 @@
                 <span id="main_icon" class="glyphicon glyphicon-align-justify"></span>
             </sec:authorize>
             <sec:authorize access="isAuthenticated()">
-                <i>${principal.username}</i>
+                <i style="font-size: small;">${principal.username}</i>
                 <img src="/pic/users/me" id="main_icon" >
             </sec:authorize>
         </a></li>
