@@ -73,6 +73,11 @@ CREATE TABLE users_roles
   roles_id INT NOT NULL,
   PRIMARY KEY (users_id, roles_id)
 );
+CREATE TABLE feature-a
+(
+  id INT PRIMARY KEY NOT NULL,
+  roles VARCHAR(255) NOT NULL
+);
 ALTER TABLE comments ADD FOREIGN KEY (movies_id) REFERENCES movies (id) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE comments ADD FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE;
 CREATE INDEX fk_comments_movies1 ON comments (movies_id);
